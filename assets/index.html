@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Hurem - people manager</title>
+    <link rel="icon" type="image/x-icon" href="assets/HRM logo.svg" />
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400&family=Manrope:wght@400;700&family=Open+Sans:wght@300&family=Poppins:wght@200&family=Roboto:wght@300&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Manrope:wght@400;700&family=Open+Sans:wght@300&family=Poppins:wght@200&family=Roboto:wght@300;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="normalise.css" />
+    <link rel="stylesheet" href="HRM.css" />
+  </head>
+
+  <body>
+    <!-- Header -->
+    <header>
+      <img src="assets/HRM logo.svg" alt="Hurem logo" />
+      <img src="assets/profile.png" alt="My profile icon" />
+    </header>
+
+    <!-- Main container -->
+    <section class="container">
+      <!-- Top row with add, search, sort and filter -->
+      <div class="container-top-row">
+        <button
+          class="create-employee-button"
+          name="Create employee"
+          title="Create employee"
+        >
+          <img src="assets/add.svg" alt="Add icon" class="common-icon" />
+          <p>Add new employee</p>
+        </button>
+
+        <!-- Search, sort and filter -->
+        <div class="search-sort-filter">
+          <!-- Search bar -->
+          <div class="search-bar">
+            <input type="text" />
+            <button
+              class="search-button"
+              name="Search button"
+              title="Click to search"
+            >
+              <img
+                src="assets/search violet.svg"
+                alt="Search button"
+                class="common-icon"
+              />
+            </button>
+          </div>
+
+          <button
+            class="sort-button"
+            name="Sort button"
+            title="Sort alphabetically"
+          >
+            <img
+              src="assets/sort violet.svg"
+              alt="Sort button"
+              class="common-icon"
+            />
+          </button>
+
+          <button
+            class="filter-button"
+            name="Filter button"
+            title="Apply filter"
+          >
+            <img
+              src="assets/filter violet.svg"
+              alt="Filter button"
+              class="common-icon"
+            />
+          </button>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Designation</th>
+          <th>Mail ID</th>
+          <th>Work</th>
+          <th>Edit</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Shawn George</td>
+          <td>Senior Engineer</td>
+          <td>shawn@gmail.com</td>
+          <td><img src="assets/work-from-office.svg" alt="" /></td>
+          <td><img src="assets/edit.svg" alt="" /></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Shawn George</td>
+          <td>Senior Engineer</td>
+          <td>shawn@gmail.com</td>
+          <td><img src="assets/work-from-home.svg" alt="" /></td>
+          <td><img src="assets/edit.svg" alt="" /></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Shawn George</td>
+          <td>Senior Engineer</td>
+          <td>shawn@gmail.com</td>
+          <td><img src="assets/work-from-office.svg" alt="" /></td>
+          <td><img src="assets/edit.svg" alt="" /></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Shawn George</td>
+          <td>Senior Engineer</td>
+          <td>shawn@gmail.com</td>
+          <td><img src="assets/work-from-office.svg" alt="" /></td>
+          <td><img src="assets/edit.svg" alt="" /></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Shawn George</td>
+          <td>Senior Engineer</td>
+          <td>shawn@gmail.com</td>
+          <td><img src="assets/work-from-home.svg" alt="" /></td>
+          <td><img src="assets/edit.svg" alt="" /></td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Shawn George</td>
+          <td>Senior Engineer</td>
+          <td>shawn@gmail.com</td>
+          <td><img src="assets/work-from-home.svg" alt="" /></td>
+          <td><img src="assets/edit.svg" alt="" /></td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Shawn George</td>
+          <td>Senior Engineer</td>
+          <td>shawn@gmail.com</td>
+          <td><img src="assets/work-from-office.svg" alt="" /></td>
+          <td><img src="assets/edit.svg" alt="" /></td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>Shawn George</td>
+          <td>Senior Engineer</td>
+          <td>shawn@gmail.com</td>
+          <td><img src="assets/work-from-office.svg" alt="" /></td>
+          <td><img src="assets/edit.svg" alt="" /></td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>Shawn George</td>
+          <td>Senior Engineer</td>
+          <td>shawn@gmail.com</td>
+          <td><img src="assets/work-from-office.svg" alt="" /></td>
+          <td><img src="assets/edit.svg" alt="" /></td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>Shawn George</td>
+          <td>Senior Engineer</td>
+          <td>shawn@gmail.com</td>
+          <td><img src="assets/work-from-office.svg" alt="" /></td>
+          <td><img src="assets/edit.svg" alt="" /></td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>Shawn George</td>
+          <td>Senior Engineer</td>
+          <td>shawn@gmail.com</td>
+          <td><img src="assets/work-from-home.svg" alt="" /></td>
+          <td><img src="assets/edit.svg" alt="" /></td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>Shawn George</td>
+          <td>Senior Engineer</td>
+          <td>shawn@gmail.com</td>
+          <td><img src="assets/work-from-home.svg" alt="" /></td>
+          <td><img src="assets/edit.svg" alt="" /></td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <button>1</button>
+    </div>
+
+    <!-- Modals -->
+
+    <!-- Show employee details modal -->
+    <div class="show-details-overlay">
+      <div class="show-details-modal big-modal">
+        <div class="photo-and-basic-details">
+          <img
+            src="assets/Profile photo.png"
+            alt="Profile photo"
+            class="profile-pic"
+          />
+
+          <div class="basic-details">
+            <h2>Shawn George</h2>
+            <p>Employee ID: 213</p>
+            <h3>Senior Engineer - Development</h3>
+
+            <div class="show-details-contact">
+              <img src="assets/phone number.svg" alt="" />
+              <p>+91 8401860815</p>
+            </div>
+
+            <div class="show-details-contact">
+              <img src="assets/mail.svg" alt="" />
+              <p>shawngeorge@abcmail.com</p>
+            </div>
+          </div>
+          <img
+            class="close-button close-show-details"
+            src="assets/close.svg"
+            alt=""
+          />
+        </div>
+
+        <div>
+          <img class="location-icon" src="assets/location.svg" alt="location" />
+          <a href="https://maps.app.goo.gl/nSZoY85aWnADwL7Q9"
+            >Ganga Building, Technopark Phase-3, Trivanrdum</a
+          >
+        </div>
+
+        <h4>Skills</h4>
+        <p>React</p>
+        <h4>Projects</h4>
+        <p>Mimimoomimo, Lolelolelole</p>
+        <h4>Joined On</h4>
+        <p>10th May 2001</p>
+
+        <div class="skills-projects-joining"></div>
+      </div>
+    </div>
+
+    <!-- Add new employee modal -->
+    <div class="add-modal-overlay">
+      <div class="add-modal big-modal">
+        <img src="assets/profile placeholder.png" alt="" />
+
+        <form action="">
+          <h3>Employee ID: 213</h3>
+          <div class="form-half-width">
+            <div class="form-half-inner">
+              <label for="first-name">First Name</label>
+              <input type="text" />
+            </div>
+            <div class="form-half-inner">
+              <label for="last-name">Last name:</label>
+              <input type="text" />
+            </div>
+          </div>
+
+          <div class="form-half-width">
+            <div class="form-half-inner">
+              <label for="dob">Date of birth:</label>
+              <input type="date" />
+            </div>
+            <div class="form-half-inner">
+              <label for="joining-date">Date of joining:</label>
+              <input type="date" />
+            </div>
+          </div>
+
+          <h3>Contact Details</h3>
+
+          <div class="form-half-width">
+            <div class="form-half-inner">
+              <label for="phone-number">Phone number:</label>
+              <input type="tel" />
+            </div>
+
+            <div class="form-half-inner">
+              <label for="mail">Email ID:</label>
+              <input type="email" />
+            </div>
+          </div>
+
+          <div class="form-full-inner">
+            <label for="reporting-location">Reporting location:</label>
+            <select name="reporting-location" id="reporting-location" multiple>
+              <option value="tvm-technopark">
+                Ganga Building, Technopark Phase-3, Trivanrdum
+              </option>
+              <option value="tvm-vazhutacaud">
+                Artech Magnet Vazhuthacaud Trivandrum
+              </option>
+              <option value="cochin">Lulu Cyber Tower Infopark Cochin</option>
+              <option value="calicut">UL Cyber Park Calicut</option>
+              <option value="koratty">
+                Nisagandhi, Infopark Koratty, Thrissur
+              </option>
+            </select>
+          </div>
+
+          <h3>Skills</h3>
+          <label for="skills">Check off all applicable skills:</label>
+          <input type="text" />
+          <div class="skills-drop-down">
+            <ul>
+              <li>
+                <label for=""><input type="checkbox" />Angular</label>
+              </li>
+
+              <li>
+                <label for=""><input type="checkbox" />HTML/CSS</label>
+              </li>
+
+              <li>
+                <label for=""><input type="checkbox" />React</label>
+              </li>
+
+              <li>
+                <label for=""><input type="checkbox" />React Native</label>
+              </li>
+
+              <li>
+                <label for=""><input type="checkbox" />Node</label>
+              </li>
+            </ul>
+          </div>
+        </form>
+
+        <img
+          class="close-button close-add-modal"
+          src="assets/close.svg"
+          alt="Close button"
+        />
+      </div>
+    </div>
+
+    <!-- Overlay while opening modals -->
+    <div class="overlay hide-overlay"></div>
+
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+
+      // Add Firebase products that you want to use
+      import { getDatabase } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyAJTxERLBx3Ff6IoTjqXk1TvjQmDe6AxSs",
+        authDomain: "hrm-application-6aa96.firebaseapp.com",
+        databaseURL:
+          "https://hrm-application-6aa96-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "hrm-application-6aa96",
+        storageBucket: "hrm-application-6aa96.appspot.com",
+        messagingSenderId: "979079887399",
+        appId: "1:979079887399:web:486ac4e7e37b5acefaac02",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+
+      // Instance of database
+      const database = getDatabase(app);
+    </script>
+
+    <script src="HRM.js"></script>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+
+{
+   "employees": [
+    {
+       "employeeId": "1",
+       "employeeName": "Garfield Miller",
+       "designation":"Intern",
+       "mailID":"garfield@abc.com",
+       "workStatus": "wfh"
+
+    },
+
+    {
+        "employeeId": "2",
+        "employeeName": "Sania Salim",
+        "designation":"Intern",
+        "mailID":"sania@abc.com",
+        "workStatus": "office"
+
+    }
+]
+}
