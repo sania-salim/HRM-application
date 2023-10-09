@@ -96,6 +96,8 @@ header {
   height: 47px;
   margin: 24px 0;
   box-shadow: 2px 2px rgba(0, 0, 0, 0.103);
+  font-weight: 400;
+  color: var(--primaryDark);
 }
 
 .create-employee-button:hover {

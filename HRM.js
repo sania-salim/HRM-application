@@ -12,18 +12,16 @@ employeeArr.forEach(employee => {
     employee.addEventListener("click", showEmployee);
 });
 
-
 function showEmployee() {
-
     employeeDetailsModal.classList.add("show-modal");
     employeeModalClose.addEventListener("click", closeEmployee);
-
 }
 
 function closeEmployee() {
     employeeDetailsModal.classList.remove("show-modal");
-
 }
+
+
 
 // Add employee modal on button click
 createButton.addEventListener("click", showAddModal);
@@ -36,17 +34,3 @@ function showAddModal() {
 function closeAddModal() {
     addEmployeeModal.classList.remove("show-modal");
 }
-
-
-//testing reading
-
-const usr = ref(db, 'users/' + "First");
-onValue(usr, (snapshot) => {
-    console.log("hi", snapshot.val());
-});
-
-
-const emp = ref(db, 'employees/' + "0");
-onValue(emp, (snapshot) => {
-    console.log("hi2", snapshot.val());
-});

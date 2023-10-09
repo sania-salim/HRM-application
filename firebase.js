@@ -5,6 +5,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebas
 // Add Firebase products that you want to use
 import {
     getDatabase,
+    child,
     ref,
     get,
     onValue,
@@ -32,28 +33,40 @@ const app = initializeApp(firebaseConfig);
 // Instance of database
 const db = getDatabase(app);
 
-
-//testing adding data to db
-function writeUserData() {
-
-    console.log("hi")
-    set(ref(db, 'users/' + "First"), {
-        username: "sania",
-        email: "sania@gmail"
-    });
+export {
+    app,
+    db,
+    getDatabase,
+    ref,
+    child,
+    get,
+    onValue,
+    set,
+    update,
+    query,
 }
 
-writeUserData();
+// //testing adding data to db
+// function writeUserData() {
 
-//testing reading
+//     console.log("hi")
+//     set(ref(db, 'users/' + "First"), {
+//         username: "sania",
+//         email: "sania@gmail"
+//     });
+// }
 
-const usr = ref(db, 'users/' + "First");
-onValue(usr, (snapshot) => {
-    console.log("hi", snapshot.val());
-});
+// writeUserData();
+
+// //testing reading
+
+// const usr = ref(db, 'users/' + "First");
+// onValue(usr, (snapshot) => {
+//     console.log("hi", snapshot.val());
+// });
 
 
-const emp = ref(db, 'employees/' + "0");
-onValue(emp, (snapshot) => {
-    console.log("hi2", snapshot.val());
-});
+// const emp = ref(db, 'employees/' + "0");
+// onValue(emp, (snapshot) => {
+//     console.log("hi2", snapshot.val());
+// });
