@@ -152,3 +152,19 @@ employeeDetailsModal.classList.remove("show-modal"); // } } /*
 <div class="skills-projects-joining"></div>
 
 */ console.log(targetRow); if (targetRow) { e.target.style.color = 'Brown'; }
+//writing data try { const docRef = await addDoc(collection(db, "users"), {
+first: "Ada", last: "Lovelace", born: 1815 }); console.log("Document written
+with ID: ", docRef.id); } catch (e) { console.error("Error adding document: ",
+e); } //writing second data try { const docRef = await addDoc(collection(db,
+"users"), { first: "Alan", middle: "Mathison", last: "Turing", born: 1912 });
+console.log("Document written with ID: ", docRef.id); } catch (e) {
+console.error("Error adding document: ", e); }
+/////////////////////////////////////////////////////////////////////////////////////
+// fetch all employees // async function getEmployeeTable() { // reading
+employee table // const employee = await getDocs(collection(db, "employee")); //
+console.log(employee, "first"); // let empData = []; // employee.forEach((emp)
+=> { // let data = { // employeeId: `${emp.get("employeeId")}`, // employeeName:
+`${emp.get("employeeName")}`, // designation: `${emp.get("designation")}`, //
+mailID: `${emp.get("mailID")}`, // designation: `${emp.get("designation")}`, //
+workStatus: `${emp.get("workStatus")}` // } // empData.push(data); // }); //
+console.log(empData); // showEmployeeTable(empData); // } // getEmployeeTable();

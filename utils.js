@@ -1,14 +1,14 @@
 import {
-    app,
-    db,
-    getDatabase,
-    ref,
-    child,
-    get,
-    onValue,
-    set,
-    update,
-    query,
+  app,
+  db,
+  getDatabase,
+  ref,
+  child,
+  get,
+  onValue,
+  set,
+  update,
+  query,
 } from "./firebase.js";
 
 /* fetch functions:
@@ -23,6 +23,7 @@ import {
 /* Display functions:
     1. showEmployeeTable(employees): called by getEmployeeTable() & displays table
     2. showDetailsModal(employeeDetails): displays modal of particular employee
+    3. showEditModal(): displays modal details in form
 */
 
 const dbref = ref(db);
@@ -32,33 +33,33 @@ const tableBody = document.querySelector(".table-body");
 
 function getEmployeeTable() {
 
-    let employees;
+  let employees;
 
-    get(child(dbref, 'employees')).then((snapshot) => {
-        employees = snapshot.val();
-        console.log(snapshot.val());
+  get(child(dbref, 'employees')).then((snapshot) => {
+    employees = snapshot.val();
+    console.log(snapshot.val());
 
-        showEmployeeTable(employees);
+    showEmployeeTable(employees);
 
-    })
+  })
 }
 
 // Displays fetched data as table 
 function showEmployeeTable(employees) {
-    let temp = "";
-    employees.forEach(employee => {
+  let temp = "";
+  employees.forEach(employee => {
 
-        // setting icon depending on work from home or office
-        let workIcon;
-        if (employee.workStatus === "wfh") {
-            workIcon = "assets/work-from-home.svg";
-        } else if (employee.workStatus === "office") {
-            workIcon = "assets/work-from-office.svg";
-        }
+    // setting icon depending on work from home or office
+    let workIcon;
+    if (employee.workStatus === "wfh") {
+      workIcon = "assets/work-from-home.svg";
+    } else if (employee.workStatus === "office") {
+      workIcon = "assets/work-from-office.svg";
+    }
 
-        // adding each employee as row to table body
-        temp += `
-        <tr>
+    // adding each employee as row to table body
+    temp += `
+        <tr data-empID="${employee.employeeId}">
         <td>${employee.employeeId}</td>
         <td>${employee.employeeName}</td>
         <td>${employee.designation}</td>
@@ -67,8 +68,8 @@ function showEmployeeTable(employees) {
         <td><img src="assets/edit.svg" alt="" /></td>
       </tr>`
 
-    });
-    tableBody.innerHTML = temp;
+  });
+  tableBody.innerHTML = temp;
 }
 
 getEmployeeTable();
@@ -80,16 +81,19 @@ const employeeDetailsModal = document.querySelector(".show-details-overlay")
 // listener for click on row
 tableBody.addEventListener("click", function (e) {
 
-    const targetRow = e.target.closest("tr");
-    employeeDetailsModal.classList.add("show-modal");
+  const targetRow = e.target.closest("tr");
+  const row = targetRow.getAttribute("data-empID");
+  console.log(row);
 
-    let employeeDetails;
+  employeeDetailsModal.classList.add("show-modal");
 
-    get(child(dbref, 'employeeDetails/' + targetRow.rowIndex)).then((snapshot) => {
-        employeeDetails = snapshot.val();
-        console.log(employeeDetails);
-        showDetailsModal(employeeDetails);
-    })
+  let employeeDetails;
+
+  get(child(dbref, 'employeeDetails/' + row)).then((snapshot) => {
+    employeeDetails = snapshot.val();
+    console.log(employeeDetails);
+    showDetailsModal(employeeDetails);
+  })
 
 });
 
@@ -97,9 +101,8 @@ const employeeDetails = document.querySelector(".show-details-modal");
 
 function showDetailsModal(details) {
 
-    let temp = "";
-
-    temp = `
+  let temp = "";
+  temp = `
         <div class="photo-and-basic-details">
           <img
             src="assets/Profile photo.png"
@@ -146,11 +149,11 @@ function showDetailsModal(details) {
         <div class="skills-projects-joining"></div>
         `
 
-    employeeDetails.innerHTML = temp;
-    const employeeModalClose = document.querySelector(".close-show-details");
+  employeeDetails.innerHTML = temp;
+  const employeeModalClose = document.querySelector(".close-show-details");
 
-    employeeModalClose.addEventListener("click", closeEmployee);
-    function closeEmployee() {
-        employeeDetailsModal.classList.remove("show-modal");
-    }
+  employeeModalClose.addEventListener("click", closeEmployee);
+  function closeEmployee() {
+    employeeDetailsModal.classList.remove("show-modal");
+  }
 }
