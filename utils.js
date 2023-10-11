@@ -14,7 +14,6 @@ import {
 /* fetch functions:
     1. getEmployeeTable() => fetches all employees data for table
     2. getEmployee(employeeID) => fetches details of clicked employee, obj from array of objs
-                                  and displays in show details modal
     3. addNewEmployee() => adds new entry in employee table and in more details table
     4. editEmployee(employeeID) => edit corresp entry from both tables
     5. deleteEmployee(employeeID) => deletes corresp entry from both tables
@@ -156,4 +155,10 @@ function showDetailsModal(details) {
   function closeEmployee() {
     employeeDetailsModal.classList.remove("show-modal");
   }
+}
+
+
+// add new entry in employee table and in more details table
+function addNewEmployee() {
+
 }

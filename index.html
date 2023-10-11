@@ -120,27 +120,27 @@
       <div class="add-modal big-modal">
         <img src="assets/profile placeholder.png" alt="" />
 
-        <form action="">
+        <form action="" id="get-details-form">
           <h3>Employee ID: 213</h3>
           <div class="form-half-width">
             <div class="form-half-inner">
               <label for="first-name">First Name</label>
-              <input type="text" />
+              <input type="text" class="first-name" />
             </div>
             <div class="form-half-inner">
               <label for="last-name">Last name:</label>
-              <input type="text" />
+              <input type="text" class="last-name" />
             </div>
           </div>
 
           <div class="form-half-width">
             <div class="form-half-inner">
               <label for="dob">Date of birth:</label>
-              <input type="date" />
+              <input type="date" class="dob" />
             </div>
             <div class="form-half-inner">
               <label for="joining-date">Date of joining:</label>
-              <input type="date" />
+              <input type="date" class="joining-date" />
             </div>
           </div>
 
@@ -149,12 +149,12 @@
           <div class="form-half-width">
             <div class="form-half-inner">
               <label for="phone-number">Phone number:</label>
-              <input type="tel" />
+              <input type="tel" class="mobile-number" />
             </div>
 
             <div class="form-half-inner">
               <label for="mail">Email ID:</label>
-              <input type="email" />
+              <input type="email" class="mail" />
             </div>
           </div>
 
@@ -173,6 +173,9 @@
                 Nisagandhi, Infopark Koratty, Thrissur
               </option>
             </select>
+
+            <label for="designation">Designation</label>
+            <input type="text" class="designation" />
           </div>
 
           <h3>Skills</h3>
@@ -181,26 +184,47 @@
           <div class="skills-drop-down">
             <ul>
               <li>
-                <label for=""><input type="checkbox" />Angular</label>
+                <label for="skills"
+                  ><input type="checkbox" id="skill-Angular" />Angular</label
+                >
               </li>
 
               <li>
-                <label for=""><input type="checkbox" />HTML/CSS</label>
+                <label for="skills"
+                  ><input type="checkbox" id="skill-HTML/CSS" />HTML/CSS</label
+                >
               </li>
 
               <li>
-                <label for=""><input type="checkbox" />React</label>
+                <label for="skills"
+                  ><input type="checkbox" id="skill-React" />React</label
+                >
               </li>
 
               <li>
-                <label for=""><input type="checkbox" />React Native</label>
+                <label for="skills"
+                  ><input type="checkbox" id="skill-React-Native" />React
+                  Native</label
+                >
               </li>
 
               <li>
-                <label for=""><input type="checkbox" />Node</label>
+                <label for="skills" id="skill-Nodes"
+                  ><input type="checkbox" />Node</label
+                >
               </li>
             </ul>
           </div>
+          <div>
+            <button type="button" class="cancel-create">Cancel</button>
+            <button type="submit">Submit</button>
+          </div>
+
+          <label for="work-status">Select work status:</label>
+          <select name="work-status" class="work-status">
+            <option value="wfh">Work From home</option>
+            <option value="office">Office</option>
+          </select>
         </form>
 
         <img
