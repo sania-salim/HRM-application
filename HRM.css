@@ -221,11 +221,13 @@ th {
 }
 
 /* Add modal */
-.add-modal-overlay {
+.add-modal-overlay,
+.edit-modal-overlay {
   display: none;
 }
 
-.add-modal-overlay.show-modal {
+.add-modal-overlay.show-modal,
+.edit-modal-overlay.show-modal {
   inset: 0;
   display: flex;
   background-color: #1111115d;
@@ -235,7 +237,8 @@ th {
   position: fixed;
 }
 
-.add-modal {
+.add-modal,
+.edit-modal {
   display: flex;
   width: 1030px;
   height: 600px;
@@ -261,21 +264,38 @@ form {
   gap: 10px;
 }
 
-.form-half-width input {
+.form-half-width input,
+form select {
   width: 240px;
   height: 30px;
 }
 
-form select,
+/* form select,
 .form-full-inner {
   width: 585px;
   height: 30px;
+} */
+
+/* .skills-input:focus{
+
+} */
+
+.skills-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .skills-drop-down {
-  /* display: none; */
+  display: none;
   width: 585px;
   background-color: var(--primaryLight);
+  padding: 0;
+  margin: 0;
+}
+
+.skills-drop-down.show-modal {
+  display: block;
 }
 
 form ul {

@@ -158,73 +158,97 @@
             </div>
           </div>
 
-          <div class="form-full-inner">
-            <label for="reporting-location">Reporting location:</label>
-            <select name="reporting-location" id="reporting-location" multiple>
-              <option value="tvm-technopark">
-                Ganga Building, Technopark Phase-3, Trivanrdum
-              </option>
-              <option value="tvm-vazhutacaud">
-                Artech Magnet Vazhuthacaud Trivandrum
-              </option>
-              <option value="cochin">Lulu Cyber Tower Infopark Cochin</option>
-              <option value="calicut">UL Cyber Park Calicut</option>
-              <option value="koratty">
-                Nisagandhi, Infopark Koratty, Thrissur
-              </option>
-            </select>
+          <h3>Employment details</h3>
+          <div class="form-half-width">
+            <div class="form-half-inner">
+              <label for="reporting-location">Reporting location:</label>
+              <select name="reporting-location" id="reporting-location">
+                <option value="tvm-technopark">
+                  Ganga Building, Technopark Phase-3, Trivanrdum
+                </option>
+                <option value="tvm-vazhutacaud">
+                  Artech Magnet Vazhuthacaud Trivandrum
+                </option>
+                <option value="cochin">Lulu Cyber Tower Infopark Cochin</option>
+                <option value="calicut">UL Cyber Park Calicut</option>
+                <option value="koratty">
+                  Nisagandhi, Infopark Koratty, Thrissur
+                </option>
+              </select>
+            </div>
 
-            <label for="designation">Designation</label>
-            <input type="text" class="designation" />
+            <div class="form-half-inner">
+              <label for="designation">Designation</label>
+              <input type="text" class="designation" />
+            </div>
           </div>
 
           <h3>Skills</h3>
           <label for="skills">Check off all applicable skills:</label>
-          <input type="text" />
-          <div class="skills-drop-down">
-            <ul>
+          <div class="skills-container">
+            <input type="text" class="skills-input" />
+
+            <ul class="skills-drop-down">
               <li>
                 <label for="skills"
-                  ><input type="checkbox" id="skill-Angular" />Angular</label
+                  ><input
+                    type="checkbox"
+                    class="skill-select"
+                    value="Angular"
+                  />Angular</label
                 >
               </li>
 
               <li>
                 <label for="skills"
-                  ><input type="checkbox" id="skill-HTML/CSS" />HTML/CSS</label
+                  ><input
+                    type="checkbox"
+                    class="skill-select"
+                    value="HTML/CSS"
+                  />HTML/CSS</label
                 >
               </li>
 
               <li>
                 <label for="skills"
-                  ><input type="checkbox" id="skill-React" />React</label
+                  ><input
+                    type="checkbox"
+                    class="skill-select"
+                    value="React"
+                  />React</label
                 >
               </li>
 
               <li>
                 <label for="skills"
-                  ><input type="checkbox" id="skill-React-Native" />React
-                  Native</label
+                  ><input
+                    type="checkbox"
+                    class="skill-select"
+                    value="React"
+                  />React Native</label
                 >
               </li>
 
               <li>
-                <label for="skills" id="skill-Nodes"
-                  ><input type="checkbox" />Node</label
+                <label for="skills"
+                  ><input
+                    type="checkbox"
+                    class="skill-select"
+                    value="Node"
+                  />Node</label
                 >
               </li>
             </ul>
           </div>
+          <label for="work-status">Select work status:</label>
+          <select name="work-status" class="work-status">
+            <option value="office">Office</option>
+            <option value="wfh">Work From home</option>
+          </select>
           <div>
             <button type="button" class="cancel-create">Cancel</button>
             <button type="submit">Submit</button>
           </div>
-
-          <label for="work-status">Select work status:</label>
-          <select name="work-status" class="work-status">
-            <option value="wfh">Work From home</option>
-            <option value="office">Office</option>
-          </select>
         </form>
 
         <img
@@ -235,8 +259,8 @@
       </div>
     </div>
 
-    <!-- Overlay while opening modals -->
-    <div class="overlay hide-overlay"></div>
+    <!-- Edit employee modal -->
+    <div class="edit-modal-overlay"></div>
 
     <!-- <script type="module" src="firebase.js"></script>
     <script type="module" src="utils.js"></script> -->

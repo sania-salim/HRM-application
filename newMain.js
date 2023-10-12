@@ -1,9 +1,10 @@
-import { db, getDocs, getDoc, collection, addDoc, query, where, doc, setDoc } from "./firestore.js";
+import { db, getDocs, getDoc, collection, addDoc, query, where, doc, setDoc, limit, updateDoc } from "./firestore.js";
 
+/* FETCH AND DISPLAY TABLE */
 
 // fetching main table of all employees
 async function queryEmployeeTable() {
-  const queryTable = query(collection(db, "employee"));
+  const queryTable = query(collection(db, "employee"), limit(10));
   const employees = await getDocs(queryTable);
 
   let empData = [];
@@ -48,7 +49,7 @@ function showEmployeeTable(employeeArr) {
         <td>${employee.designation}</td>
         <td>${employee.mailID}</td>
         <td><img src=${workIcon} alt="" /></td>
-        <td><img src="assets/edit.svg" alt="" /></td>
+        <td><img src="assets/edit.svg" alt=""  class="edit-icon"/></td>
       </tr>`
 
   });
@@ -57,23 +58,27 @@ function showEmployeeTable(employeeArr) {
 }
 
 
-const employeeDetailsModal = document.querySelector(".show-details-overlay")
-// listener for click on row
+
+/* FETCH AND DISPLAY MODAL */
+
+// listener for click on row and on edit icon
+const employeeDetailsModal = document.querySelector(".show-details-overlay");
+
 tableBody.addEventListener("click", function (e) {
 
   const targetRow = e.target.closest("tr");
   const row = targetRow.getAttribute("data-empID");
-  console.log(row);
-  employeeDetailsModal.classList.add("show-modal");
+  const currentTargetTd = e.target.getAttribute("class");
+  console.log(e.target)
+  console.log(currentTargetTd)
 
-  queryEmployeeDetails(Number(row));
+  queryEmployeeDetails(Number(row), currentTargetTd);
 
 });
 
 
-
-// fetching employee details data for modal
-async function queryEmployeeDetails(row) {
+// fetching employee details data for details and edit modal
+async function queryEmployeeDetails(row, currentTargetTd) {
 
   let employeeDetails;
   let queryEmployee = query(collection(db, "employee"), where("employeeId", "==", row));
@@ -88,18 +93,30 @@ async function queryEmployeeDetails(row) {
       employeeName: data.employeeName,
       designation: data.designation,
       mailID: data.mailID,
-      mobileNumber: data.mobileNumber
+      mobileNumber: data.mobileNumber,
+      skills: data.skills,
+      joiningDate: data.joiningDate
     }
   })
-  showDetailsModal(employeeDetails);
-}
 
+  //if e.target is edit img, then open edit modal else show details
+  if (currentTargetTd === "edit-icon") {
+    console.log("im trying to display")
+    showEditModal(employeeDetails);
+
+  } else {
+    console.log("im in else condition");
+    showDetailsModal(employeeDetails);
+  }
+
+}
 
 
 // displaying fetched employee details in modal
 const employeeDetails = document.querySelector(".show-details-modal");
 function showDetailsModal(details) {
 
+  employeeDetailsModal.classList.add("show-modal");
   let temp = "";
   temp = `
           <div class="photo-and-basic-details">
@@ -110,8 +127,8 @@ function showDetailsModal(details) {
             />
   
             <div class="basic-details">
-              <h2>${details.employeeId}</h2>
-              <p>${details.employeeName}213</p>
+              <h2>${details.employeeName}</h2>
+              <p>ID: ${details.employeeId}</p>
               <h3>${details.designation}</h3>
   
               <div class="show-details-contact">
@@ -139,12 +156,12 @@ function showDetailsModal(details) {
           </div>
   
           <h4>Skills</h4>
-          <p>React</p>
+          <p>${details.skills}</p>
           <h4>Projects</h4>
           <p>${details.projectList}</p>
           <h4>Joined On</h4>
           <p>${details.joiningDate}</p>
-  
+
           `
 
   employeeDetails.innerHTML = temp;
@@ -157,8 +174,7 @@ function showDetailsModal(details) {
 }
 
 
-
-
+/* DISPLAY CREATE FORM AND ADD NEW ENTRY TO DATABASE */
 
 // listener for create button click
 const createButton = document.querySelector(".create-employee-button");
@@ -166,8 +182,6 @@ const addEmployeeModal = document.querySelector(".add-modal-overlay");
 const addModalClose = document.querySelector(".close-add-modal");
 const cancelAdd = document.querySelector(".cancel-create");
 const addForm = document.getElementById("get-details-form");
-
-
 
 // Add employee modal on button click
 createButton.addEventListener("click", addNewEmployee);
@@ -183,38 +197,10 @@ function addNewEmployee() {
     addEmployeeModal.classList.remove("show-modal");
   }
 
-  addForm.addEventListener("submit", async (e) => {
-    e.preventDefault()
+  let id = newId();
+  pushEmployee(id);
 
-    let name1 = document.querySelector(".first-name");
-    let name2 = document.querySelector(".last-name");
-    let mobile = document.querySelector(".mobile-number");
-    let mail = document.querySelector(".mail");
-    let workStatus = document.querySelector(".work-status");
-    let joined = document.querySelector(".joining-date");
-    let skills = document.querySelector(".skills-drop-down");
-    let designation = document.querySelector(".designation");
-
-    // console.log(skills.value);
-
-    let id = newId();
-    // console.log("hi im id", id)
-
-    let empDoc = {
-      employeeName: name1.value,
-      designation: designation.value,
-      mailID: mail.value,
-      mobileNumber: mobile.value,
-      workStatus: workStatus.value,
-      employeeId: id,
-      joiningDate: joined.value,
-      // skills: skills.value
-    }
-    console.log(empDoc)
-    await setDoc(doc(collection(db, "employee")), empDoc);
-  })
 }
-
 
 // independant function to assign employee ID
 // call newId() to get new ID
@@ -229,4 +215,249 @@ function count() {
   return incrementCount;
 }
 const newId = count();
+
+
+// push employee => add/edit
+async function pushEmployee(id) {
+  addForm.addEventListener("submit", async (e) => {
+    e.preventDefault()
+    console.log("hi queen");
+
+    let name1 = document.querySelector(".first-name");
+    console.log(name1);
+    let name2 = document.querySelector(".last-name");
+    let mobile = document.querySelector(".mobile-number");
+    let mail = document.querySelector(".mail");
+    let workStatus = document.querySelector(".work-status");
+    let joined = document.querySelector(".joining-date");
+    let designation = document.querySelector(".designation");
+
+    let skills = [];    //array that stores selected skills
+    let skillInputs = document.querySelectorAll(".skill-select");
+
+    console.log(skillInputs)
+    skillInputs.forEach(checkBox => {
+      if (checkBox.checked) {
+        skills.push(checkBox.value);
+      }
+    });
+
+    let empDoc = {
+      employeeName: name1.value,
+      designation: designation.value,
+      mailID: mail.value,
+      mobileNumber: mobile.value,
+      workStatus: workStatus.value,
+      employeeId: id,
+      joiningDate: joined.value,
+      skills: skills
+    }
+    console.log(empDoc)
+    await setDoc(doc(collection(db, "employee")), empDoc);
+    alert("done");
+  })
+}
+
+
+
+/* FETCH SELECTED EMPLOYEE DETAILS, DISPLAY FORM, UPDATE IN DB */
+
+// Display details in form
+const editModal = document.querySelector(".edit-modal-overlay");
+
+function showEditModal(details) {
+
+  let temp = "";
+  editModal.classList.add("show-modal");
+
+  temp = `
+  <div class="edit-modal big-modal">
+    <img src="assets/profile placeholder.png" alt="" />
+
+    <form action="" id="get-details-form">
+      <h3>Employee ID: ${details.employeeId}</h3>
+      <div class="form-half-width">
+        <div class="form-half-inner">
+          <label for="first-name">First Name</label>
+          <input type="text" class="first-name" value="${details.employeeName}" />
+        </div>
+        <div class="form-half-inner">
+          <label for="last-name">Last name:</label>
+          <input type="text" class="last-name" />
+        </div>
+      </div>
+
+      <div class="form-half-width">
+        <div class="form-half-inner">
+          <label for="dob">Date of birth:</label>
+          <input type="date" class="dob"  value="${details.joiningDate}"/>
+        </div>
+        <div class="form-half-inner">
+          <label for="joining-date">Date of joining:</label>
+          <input type="date" class="joining-date" value="${details.joiningDate}" />
+        </div>
+      </div>
+
+      <h3>Contact Details</h3>
+
+      <div class="form-half-width">
+        <div class="form-half-inner">
+          <label for="phone-number">Phone number:</label>
+          <input type="tel" class="mobile-number"  value="${details.mobileNumber}"/>
+        </div>
+
+        <div class="form-half-inner">
+          <label for="mail">Email ID:</label>
+          <input type="email" class="mail" value="${details.mailID}"/>
+        </div>
+      </div>
+
+      <h3>Employment details</h3>
+      <div class="form-half-width">
+        <div class="form-half-inner">
+          <label for="reporting-location">Reporting location:</label>
+          <select name="reporting-location" id="reporting-location">
+            <option value="tvm-technopark">
+              Ganga Building, Technopark Phase-3, Trivanrdum
+            </option>
+            <option value="tvm-vazhutacaud">
+              Artech Magnet Vazhuthacaud Trivandrum
+            </option>
+            <option value="cochin">Lulu Cyber Tower Infopark Cochin</option>
+            <option value="calicut">UL Cyber Park Calicut</option>
+            <option value="koratty">
+              Nisagandhi, Infopark Koratty, Thrissur
+            </option>
+          </select>
+        </div>
+
+        <div class="form-half-inner">
+          <label for="designation">Designation</label>
+          <input type="text" class="designation"  value="${details.designation}"/>
+        </div>
+      </div>
+
+      <h3>Skills</h3>
+      <label for="skills">Check off all applicable skills:</label>
+      <div class="skills-container">
+        <input type="text" class="skills-input" />
+
+        <ul class="skills-drop-down">
+          <li>
+            <label for="skills"
+              ><input
+                type="checkbox"
+                class="skill-select"
+                value="Angular"
+              />Angular</label
+            >
+          </li>
+
+          <li>
+            <label for="skills"
+              ><input
+                type="checkbox"
+                class="skill-select"
+                value="HTML/CSS"
+              />HTML/CSS</label
+            >
+          </li>
+
+          <li>
+            <label for="skills"
+              ><input
+                type="checkbox"
+                class="skill-select"
+                value="React"
+              />React</label
+            >
+          </li>
+
+          <li>
+            <label for="skills"
+              ><input
+                type="checkbox"
+                class="skill-select"
+                value="React"
+              />React Native</label
+            >
+          </li>
+
+          <li>
+            <label for="skills"
+              ><input
+                type="checkbox"
+                class="skill-select"
+                value="Node"
+              />Node</label
+            >
+          </li>
+        </ul>
+      </div>
+      <label for="work-status">Select work status:</label>
+      <select name="work-status" class="work-status">
+        <option value="office">Office</option>
+        <option value="wfh">Work From home</option>
+      </select>
+      <div>
+        <button type="button" class="cancel-edit">Cancel</button>
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+
+    <img
+      class="close-button close-edit-modal"
+      src="assets/close.svg"
+      alt="Close button"
+    />
+  </div>`
+
+  editModal.innerHTML = temp;
+
+  const editModalClose = editModal.querySelector(".close-edit-modal");
+  const cancelEdit = editModal.querySelector(".cancel-edit");
+
+  editModalClose.addEventListener("click", closeEditModal);
+  cancelEdit.addEventListener("click", closeEditModal);
+
+  function closeEditModal() {
+    editModal.classList.remove("show-modal");
+  }
+
+  // event listeners for submission of edit form
+
+  pushEmployee(details.employeeId);
+
+}
+
+// Update entry in database
+async function editEmployee() {
+  await updateDoc(doc(collection(db, "employee")), {
+    // key: value;
+  })
+}
+
+
+
+// form skill slection drop-down on input focus
+const skillInput = document.querySelector(".skills-input");
+const skillsDropDown = document.querySelector(".skills-drop-down");
+skillInput.addEventListener("focus", showSkillDropDown);
+
+function showSkillDropDown() {
+  skillsDropDown.classList.add("show-modal");
+
+  // skillsDropDown.onblur = function () {
+  //   skillsDropDown.classList.remove("show-modal");
+  // }
+
+  //close on clicking anywhere else
+  // document.addEventListener("click", (e) => {
+
+  //   console.log(e.target);
+  //   if (e.target !== "li") {
+  //     skillsDropDown.classList.remove("show-modal");
+  //   }
+  // })
+}
 
