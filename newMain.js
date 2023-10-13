@@ -1,4 +1,5 @@
-import { db, getDocs, getDoc, collection, addDoc, query, where, doc, setDoc, limit, updateDoc } from "./firestore.js";
+import { db, getDocs, getDoc, collection, addDoc, query, where, doc, setDoc, limit, updateDoc, deleteDoc } from "./firestore.js";
+
 
 /* FETCH AND DISPLAY TABLE */
 
@@ -181,7 +182,7 @@ const createButton = document.querySelector(".create-employee-button");
 const addEmployeeModal = document.querySelector(".add-modal-overlay");
 const addModalClose = document.querySelector(".close-add-modal");
 const cancelAdd = document.querySelector(".cancel-create");
-const addForm = document.getElementById("get-details-form");
+
 
 // Add employee modal on button click
 createButton.addEventListener("click", addNewEmployee);
@@ -198,7 +199,8 @@ function addNewEmployee() {
   }
 
   let id = newId();
-  pushEmployee(id);
+  const add = "get-details-form";
+  pushEmployee(id, add);
 
 }
 
@@ -218,19 +220,22 @@ const newId = count();
 
 
 // push employee => add/edit
-async function pushEmployee(id) {
+
+async function pushEmployee(id, formType) {
+  const addForm = document.getElementById(`${formType}`);
+  console.log(formType);
+
   addForm.addEventListener("submit", async (e) => {
     e.preventDefault()
-    console.log("hi queen");
 
-    let name1 = document.querySelector(".first-name");
+    let name1 = addForm.querySelector(".first-name");
     console.log(name1);
-    let name2 = document.querySelector(".last-name");
-    let mobile = document.querySelector(".mobile-number");
-    let mail = document.querySelector(".mail");
-    let workStatus = document.querySelector(".work-status");
-    let joined = document.querySelector(".joining-date");
-    let designation = document.querySelector(".designation");
+    let name2 = addForm.querySelector(".last-name");
+    let mobile = addForm.querySelector(".mobile-number");
+    let mail = addForm.querySelector(".mail");
+    let workStatus = addForm.querySelector(".work-status");
+    let joined = addForm.querySelector(".joining-date");
+    let designation = addForm.querySelector(".designation");
 
     let skills = [];    //array that stores selected skills
     let skillInputs = document.querySelectorAll(".skill-select");
@@ -253,12 +258,18 @@ async function pushEmployee(id) {
       skills: skills
     }
     console.log(empDoc)
+
+    // if update, delete existing record
+    if (formType === "edit-details-form") {
+      console.log("im in the if consition for edit dletion")
+      deleteEmployee(id);
+    }
+
+    //then add new entry
     await setDoc(doc(collection(db, "employee")), empDoc);
     alert("done");
   })
 }
-
-
 
 /* FETCH SELECTED EMPLOYEE DETAILS, DISPLAY FORM, UPDATE IN DB */
 
@@ -270,11 +281,14 @@ function showEditModal(details) {
   let temp = "";
   editModal.classList.add("show-modal");
 
+  //check form id and logic
+
   temp = `
   <div class="edit-modal big-modal">
     <img src="assets/profile placeholder.png" alt="" />
 
-    <form action="" id="get-details-form">
+  
+    <form action="" id="edit-details-form">
       <h3>Employee ID: ${details.employeeId}</h3>
       <div class="form-half-width">
         <div class="form-half-inner">
@@ -401,6 +415,7 @@ function showEditModal(details) {
       </select>
       <div>
         <button type="button" class="cancel-edit">Cancel</button>
+        <button type="button">Delete employee</button>
         <button type="submit">Submit</button>
       </div>
     </form>
@@ -425,19 +440,38 @@ function showEditModal(details) {
   }
 
   // event listeners for submission of edit form
-
-  pushEmployee(details.employeeId);
+  const edit = "edit-details-form"
+  pushEmployee(details.employeeId, edit);
 
 }
 
 // Update entry in database
-async function editEmployee() {
-  await updateDoc(doc(collection(db, "employee")), {
-    // key: value;
-  })
+// async function editEmployee() {
+//   await updateDoc(doc(collection(db, "employee")), {
+//     // key: value;
+//   })
+// }
+
+
+/* DELETE EMPLOYEE FROM TABLE */
+
+async function deleteEmployee(id) {
+
+  let q = query(collection(db, "employee"), where("employeeId", "==", id));
+  let empDel = await getDocs(q);
+
+  let delId;
+
+  empDel.forEach(emp => {
+    delId = emp.id;
+    console.log(delId)
+  });
+
+  await deleteDoc(doc(db, "employee", `${delId}`));
+  alert("deleted");
 }
 
-
+deleteEmployee(1);
 
 // form skill slection drop-down on input focus
 const skillInput = document.querySelector(".skills-input");

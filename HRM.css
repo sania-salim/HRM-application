@@ -172,6 +172,10 @@ th {
   border-bottom: 1px solid #ddd;
 }
 
+tr:first-child {
+  padding-left: 20px;
+}
+
 /* Pagination */
 .pagination {
   display: flex;
