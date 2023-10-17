@@ -1,14 +1,16 @@
 /* Common Styles */
 :root {
-  --primaryDark: rgb(41, 93, 189);
-  --primaryLight: rgb(191, 212, 252);
-  --selection: rgb(168, 186, 219);
+  --primaryDark: rgb(64, 1, 72);
+  --secondaryDark: rgb(134, 1, 152);
+  --primaryLight: #272167;
+  --selection: #f4ebf4;
   --accent: #ff9a03;
   --themeWhite: #f5f5f5;
   --themeBlack: #111111;
   --themeGrey: #d9d9d9;
   --themeRed: #ff0000;
   --themeGreen: #5faf5e;
+  --secondaryText: #878cbd;
 }
 
 .common-icon {
@@ -58,6 +60,11 @@ body {
   margin: 0 auto;
   font-family: "roboto";
   font-weight: 300;
+  background-color: white;
+  /* background: linear-gradient(180deg, #FAFBFF 0%, #EFF1F9 41.68%, #E9ECF6 49.59%, #CED3E8 93.91%); */
+
+  /* background: rgb(2,0,36);
+  background: linear-gradient(90deg, rgba(2,0,36,0.2) 0%, rgba(0,133,190,0.2) 37%, rgba(100,0,166,0.2) 69%, rgba(159,0,255,0.2) 100%); */
 }
 
 /* Header */
@@ -67,7 +74,7 @@ header {
   align-items: center;
   height: 70px;
   padding: 0 45px;
-  background-color: var(--primaryDark);
+  background-color: var(--themeBlack);
 }
 
 /* Container */
@@ -75,7 +82,6 @@ header {
   display: flex;
   flex-direction: column;
   padding: 0 45px;
-  background-color: var(--themeWhite);
 }
 
 /* Top row with create, search, sort and filter */
@@ -88,24 +94,28 @@ header {
 .create-employee-button {
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  background-color: var(--primaryLight);
-  border: 0;
+  justify-content: space-evenly;
+  font-weight: 300;
+  background-color: var(--selection);
+  border: 1.4px solid var(--secondaryDark);
   border-radius: 4px;
   width: 174px;
   height: 47px;
   margin: 24px 0;
-  box-shadow: 2px 2px rgba(0, 0, 0, 0.103);
+  box-shadow: 1px 1px rgba(134, 1, 152, 0.155);
   font-weight: 400;
   color: var(--primaryDark);
 }
 
 .create-employee-button:hover {
-  background-color: var(--selection);
+  background-color: var(--secondaryDark);
+  box-shadow: none;
+  color: var(--themeWhite);
 }
 
 .create-employee-button img {
   height: 21px;
+  /* margin-left: 6px; */
 }
 
 .search-sort-filter {
@@ -117,14 +127,14 @@ header {
   display: flex;
   justify-content: space-between;
   width: 302;
-  background-color: var(--themeGrey);
+  background-color: var(--selection);
   padding: 5px 5px 5px 8px;
   border-radius: 3px;
 }
 
 .search-bar input {
   width: 250px;
-  background-color: var(--themeGrey);
+  background-color: var(--selection);
   border: none;
 }
 
@@ -135,7 +145,7 @@ input:focus {
 .search-button {
   border: 0;
   align-self: center;
-  background-color: rgba(255, 255, 255, 0);
+  background: none;
 }
 
 .sort-button,
@@ -157,7 +167,7 @@ input:focus {
   display: none;
   position: relative;
   position: absolute;
-  top: 18px;
+  top: 0;
   right: 0;
   background-color: var(--themeWhite);
   padding: 0;
@@ -176,10 +186,6 @@ input:focus {
   li:focus {
     background-color: var(--selection);
   }
-
-  > li.selected-filter-element {
-    background-color: var(--themeGreen);
-  }
 }
 
 .filter-options.filterClicked {
@@ -193,8 +199,8 @@ table {
 
 tr {
   height: 42px;
-  background-color: rgb(255, 255, 255);
   border-radius: 4px;
+  background-color: white;
 }
 
 tr:hover {
@@ -204,7 +210,7 @@ tr:hover {
 th {
   font-weight: 600px;
   color: var(--themeWhite);
-  background-color: var(--primaryDark);
+  background-color: var(--secondaryDark);
 }
 
 td,

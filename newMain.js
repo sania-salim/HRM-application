@@ -1,15 +1,131 @@
-import { db, getDocs, getDoc, collection, addDoc, query, where, doc, setDoc, limit, updateDoc, deleteDoc } from "./firestore.js";
+import { db, getDocs, getDoc, collection, addDoc, query, where, doc, setDoc, limit, updateDoc, deleteDoc, orderBy } from "./firestore.js";
+// COMMON QUERYSELECTORS
+const tableBody = document.querySelector(".table-body");
+
+const filterStatus = document.querySelector(".filter-button");
+const filterOptions = document.querySelector(".filter-options");
+
+// const sortStatus = document.querySelector("")
+
+//  FILTER, SORT, SEARCH STATUS
+
+// Sort
+let sortFlag = 0;  //current sort is none
+
+const sortButton = document.querySelector(".sort-button");
+sortButton.addEventListener("click", sortFunction)
+
+function sortFunction(callback) {
+
+  if (sortFlag === 0) {
+    sortOrder = orderBy("employeeId", "desc");
+    sortFlag = 1;
+  } else if (sortFlag === 1) {
+    sortOrder = orderBy("employeeId");
+    sortFlag = 0;
+  }
+
+  if (filterFlag) {
+    getFilteredEmployees(filterArray, sortOrder);
+  }
+  else {
+    queryEmployeeTable(sortOrder)
+  }
+
+}
+
+//filter
+let sortOrder = orderBy("employeeId");
+queryEmployeeTable();
+
+let filterFlag = 0;
+let filterArray = [];
+
+filterStatus.addEventListener("click", filterFunction);
+
+function filterFunction(e) {
+  filterStatus.classList.add("filterClicked");
+  filterOptions.classList.add("filterClicked");
+
+  let filterElement = e.target.getAttribute("class");
+  console.log(filterElement);
+
+  if (filterElement === "Angular" || filterElement === "HTML/CSS" ||
+    filterElement === "React" || filterElement === "React Native" ||
+    filterElement === "Node") {
+    console.log(filterArray);
+
+    filterArray.push(filterElement);
+    e.target.classList.add("selected-filter-element");
+  }
+
+  else if (filterElement === "done") {
+    getFilteredEmployees(filterArray, sortOrder);
+    filterFlag = 1;
+    console.log("Filtered using", filterArray)
+    filterOptions.classList.remove("filterClicked");
+    filterStatus.removeEventListener("click", filterFunction);
+    filterStatus.addEventListener("click", removeFilters);
+  }
+}
+
+function removeFilters() {
+  queryEmployeeTable();
+
+  filterStatus.classList.remove("filterClicked");
+  let previousSelections = document.querySelectorAll(".selected-filter-element");
+
+  previousSelections.forEach(skill => {
+    skill.classList.remove("selected-filter-element");
+  })
+
+  console.log("Im in remove");
+
+  filterArray = [];
+  filterStatus.addEventListener("click", filterFunction);
+
+}
+
+
+// search
+const searchInput = document.querySelector(".search-input")
+const searchButton = document.querySelector(".search-button")
+searchButton.addEventListener("click", searchFunction);
+
+function searchFunction() {
+  let prompt = searchInput.value;
+  // let q = query()
+}
 
 
 /* FETCH AND DISPLAY TABLE */
 
 // fetching main table of all employees
-async function queryEmployeeTable() {
-  const queryTable = query(collection(db, "employee"), limit(10));
+async function queryEmployeeTable(sortOrder) {
+  const queryTable = query(collection(db, "employee"), sortOrder, limit(10));
   const employees = await getDocs(queryTable);
+  showEmployeeTable(employees);
+}
+
+// FILTER
+
+// returns every document where the skills contains Node or Angular
+async function getFilteredEmployees(filterArray, sortOrder) {
+  let filterQuery = query(collection(db, "employee"), sortOrder,
+    where('skills', 'array-contains-any', filterArray));
+
+  let filteredDocs = await getDocs(filterQuery);
+  showEmployeeTable(filteredDocs);
+}
+
+
+
+// Displays fetched data as table 
+function showEmployeeTable(employees) {
+
+  tableBody.innerHTML = "";
 
   let empData = [];
-
   employees.forEach((emp) => {
 
     let data = {
@@ -23,16 +139,10 @@ async function queryEmployeeTable() {
 
     empData.push(data);
   });
-  showEmployeeTable(empData);
-}
 
-queryEmployeeTable();
 
-// Displays fetched data as table 
-const tableBody = document.querySelector(".table-body");
-function showEmployeeTable(employeeArr) {
   let temp = "";
-  employeeArr.forEach(employee => {
+  empData.forEach(employee => {
 
     // setting icon depending on work from home or office
     let workIcon;
@@ -208,7 +318,7 @@ function addNewEmployee() {
 // call newId() to get new ID
 function count() {
 
-  let countValue = 0;
+  let countValue = 6;
 
   function incrementCount() {
     countValue++;
@@ -471,7 +581,6 @@ async function deleteEmployee(id) {
   alert("deleted");
 }
 
-deleteEmployee(1);
 
 // form skill slection drop-down on input focus
 const skillInput = document.querySelector(".skills-input");
