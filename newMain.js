@@ -1,4 +1,5 @@
 import { db, getDocs, getDoc, collection, addDoc, query, where, doc, setDoc, limit, updateDoc, deleteDoc, orderBy } from "./firestore.js";
+
 // COMMON QUERYSELECTORS
 const tableBody = document.querySelector(".table-body");
 
@@ -35,6 +36,7 @@ function sortFunction(callback) {
 }
 
 //filter
+const filterContainer = document.querySelector(".filter-container");
 let sortOrder = orderBy("employeeId");
 queryEmployeeTable();
 
@@ -43,31 +45,49 @@ let filterArray = [];
 
 filterStatus.addEventListener("click", filterFunction);
 
-function filterFunction(e) {
+
+function filterFunction() {
   filterStatus.classList.add("filterClicked");
   filterOptions.classList.add("filterClicked");
 
-  let filterElement = e.target.getAttribute("class");
-  console.log(filterElement);
+  filterOptions.addEventListener("click", (e) => {
+    let filterElement = e.target.getAttribute("class");
+    console.log(filterElement);
 
-  if (filterElement === "Angular" || filterElement === "HTML/CSS" ||
-    filterElement === "React" || filterElement === "React Native" ||
-    filterElement === "Node") {
-    console.log(filterArray);
+    if (filterElement === "Angular" || filterElement === "HTML/CSS" ||
+      filterElement === "React" || filterElement === "React Native" ||
+      filterElement === "Node") {
 
-    filterArray.push(filterElement);
-    e.target.classList.add("selected-filter-element");
-  }
+      filterArray.push(filterElement);
 
-  else if (filterElement === "done") {
-    getFilteredEmployees(filterArray, sortOrder);
-    filterFlag = 1;
-    console.log("Filtered using", filterArray)
-    filterOptions.classList.remove("filterClicked");
-    filterStatus.removeEventListener("click", filterFunction);
-    filterStatus.addEventListener("click", removeFilters);
-  }
+      // adding background color to selection
+      e.target.classList.add("selected-filter-element");
+    }
+
+    else if (filterElement === "done") {
+
+      // exit without changes if empty array
+      if (filterArray.length === 0) {
+        console.log("Exiting filter without any changes");
+        filterOptions.classList.remove("filterClicked");
+      }
+
+      // filter using filter array
+      else {
+        getFilteredEmployees(filterArray, sortOrder);
+        filterFlag = 1;
+        console.log("Filtered using", filterArray);
+        filterOptions.classList.remove("filterClicked");
+      }
+    }
+
+    else if (filterElement === "clear") {
+      removeFilters();
+    }
+
+  })
 }
+
 
 function removeFilters() {
   queryEmployeeTable();
@@ -88,13 +108,26 @@ function removeFilters() {
 
 
 // search
-const searchInput = document.querySelector(".search-input")
-const searchButton = document.querySelector(".search-button")
+const searchInput = document.querySelector(".search-input");
+const searchButton = document.querySelector(".search-button");
 searchButton.addEventListener("click", searchFunction);
 
-function searchFunction() {
+async function searchFunction() {
   let prompt = searchInput.value;
-  // let q = query()
+  console.log(prompt)
+
+  let searchQuery = query(collection(db, "employee"), where('employeeName', '==', prompt));
+  let searchedDocs = await getDocs(searchQuery);
+  console.log(searchedDocs)
+
+  showEmployeeTable(searchedDocs, sortOrder);
+  // searchedDocs.forEach((doc) => {
+
+  //   let data = doc.data();
+  //   console.log("Hello to", data);
+  //   showEmployeeTable(data);
+
+  // });
 }
 
 
@@ -107,6 +140,7 @@ async function queryEmployeeTable(sortOrder) {
   showEmployeeTable(employees);
 }
 
+
 // FILTER
 
 // returns every document where the skills contains Node or Angular
@@ -117,7 +151,6 @@ async function getFilteredEmployees(filterArray, sortOrder) {
   let filteredDocs = await getDocs(filterQuery);
   showEmployeeTable(filteredDocs);
 }
-
 
 
 // Displays fetched data as table 
@@ -136,7 +169,6 @@ function showEmployeeTable(employees) {
       designation: `${emp.get("designation")}`,
       workStatus: `${emp.get("workStatus")}`
     }
-
     empData.push(data);
   });
 
@@ -338,8 +370,8 @@ async function pushEmployee(id, formType) {
   addForm.addEventListener("submit", async (e) => {
     e.preventDefault()
 
+
     let name1 = addForm.querySelector(".first-name");
-    console.log(name1);
     let name2 = addForm.querySelector(".last-name");
     let mobile = addForm.querySelector(".mobile-number");
     let mail = addForm.querySelector(".mail");
@@ -369,15 +401,70 @@ async function pushEmployee(id, formType) {
     }
     console.log(empDoc)
 
-    // if update, delete existing record
-    if (formType === "edit-details-form") {
-      console.log("im in the if consition for edit dletion")
-      deleteEmployee(id);
+    // form validation
+    let validaionFlag = 0;
+
+    if (formType === "get-details-form") {
+
+      if (empDoc.employeeName == "") {
+        console.log("Bruh name");
+        validaionFlag++;
+        const nameError = document.querySelector(".nameValidation");
+        nameError.classList.add("val-error");
+      }
+      if (empDoc.mailID == "") {
+        console.log("Bruh mail");
+        validaionFlag++;
+        const mailError = document.querySelector(".mailValidation");
+        mailError.classList.add("val-error");
+      }
+      if (empDoc.designation == "") {
+        console.log("Bruh designation");
+        validaionFlag++;
+        const designationError = document.querySelector(".designationValidation");
+        designationError.classList.add("val-error");
+      }
     }
 
-    //then add new entry
-    await setDoc(doc(collection(db, "employee")), empDoc);
-    alert("done");
+    if (formType === "edit-details-form") {
+
+      if (empDoc.employeeName == "") {
+        console.log("Bruh name");
+        validaionFlag++;
+        const nameError = document.querySelector(".nameVal");
+        nameError.classList.add("val-error");
+      }
+      if (empDoc.mailID == "") {
+        console.log("Bruh mail");
+        validaionFlag++;
+        const mailError = document.querySelector(".mailVal");
+        mailError.classList.add("val-error");
+      }
+      if (empDoc.designation == "") {
+        console.log("Bruh designation");
+        validaionFlag++;
+        const designationError = document.querySelector(".designationVal");
+        designationError.classList.add("val-error");
+      }
+
+    }
+
+
+    if (validaionFlag === 0) {
+      console.log("valid");
+      // if update, delete existing record
+      if (formType === "edit-details-form") {
+        console.log("im in the if condition for edit")
+        await updateDoc(doc(collection(db, "employee", id)), empDoc);
+        alert("done");
+        // deleteEmployee(id);
+      } else {
+        // add new entry
+        await setDoc(doc(collection(db, "employee")), empDoc);
+        alert("done");
+      }
+    }
+
   })
 }
 
@@ -397,14 +484,14 @@ function showEditModal(details) {
   <div class="edit-modal big-modal">
     <img src="assets/profile placeholder.png" alt="" />
 
-  
     <form action="" id="edit-details-form">
       <h3>Employee ID: ${details.employeeId}</h3>
       <div class="form-half-width">
         <div class="form-half-inner">
           <label for="first-name">First Name</label>
           <input type="text" class="first-name" value="${details.employeeName}" />
-        </div>
+          <p class="nameVal">Required field: enter name</p>
+          </div>
         <div class="form-half-inner">
           <label for="last-name">Last name:</label>
           <input type="text" class="last-name" />
@@ -433,6 +520,7 @@ function showEditModal(details) {
         <div class="form-half-inner">
           <label for="mail">Email ID:</label>
           <input type="email" class="mail" value="${details.mailID}"/>
+          <p class="mailVal">Required field: enter email ID</p>
         </div>
       </div>
 
@@ -458,6 +546,9 @@ function showEditModal(details) {
         <div class="form-half-inner">
           <label for="designation">Designation</label>
           <input type="text" class="designation"  value="${details.designation}"/>
+          <p class="designationVal">
+                Required field: enter designation
+              </p>
         </div>
       </div>
 
@@ -555,16 +646,8 @@ function showEditModal(details) {
 
 }
 
-// Update entry in database
-// async function editEmployee() {
-//   await updateDoc(doc(collection(db, "employee")), {
-//     // key: value;
-//   })
-// }
-
 
 /* DELETE EMPLOYEE FROM TABLE */
-
 async function deleteEmployee(id) {
 
   let q = query(collection(db, "employee"), where("employeeId", "==", id));
