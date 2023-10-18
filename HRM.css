@@ -328,16 +328,6 @@ form select {
   height: 30px;
 }
 
-/* form select,
-.form-full-inner {
-  width: 585px;
-  height: 30px;
-} */
-
-/* .skills-input:focus{
-
-} */
-
 .skills-container {
   display: flex;
   flex-direction: column;
