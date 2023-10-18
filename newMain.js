@@ -159,9 +159,11 @@ function showEmployeeTable(employees) {
   tableBody.innerHTML = "";
 
   let empData = [];
+
   employees.forEach((emp) => {
 
     let data = {
+      id: emp.id,
       employeeId: `${emp.get("employeeId")}`,
       employeeName: `${emp.get("employeeName")}`,
       designation: `${emp.get("designation")}`,
@@ -186,7 +188,7 @@ function showEmployeeTable(employees) {
 
     // adding each employee as row to table body
     temp += `
-        <tr data-empID="${employee.employeeId}">
+        <tr data-docID="${employee.id}">
         <td>${employee.employeeId}</td>
         <td>${employee.employeeName}</td>
         <td>${employee.designation}</td>
@@ -210,37 +212,27 @@ const employeeDetailsModal = document.querySelector(".show-details-overlay");
 tableBody.addEventListener("click", function (e) {
 
   const targetRow = e.target.closest("tr");
-  const row = targetRow.getAttribute("data-empID");
+  const docId = targetRow.getAttribute("data-docID");
   const currentTargetTd = e.target.getAttribute("class");
   console.log(e.target)
   console.log(currentTargetTd)
 
-  queryEmployeeDetails(Number(row), currentTargetTd);
+  queryEmployeeDetails(docId, currentTargetTd);
 
 });
 
 
 // fetching employee details data for details and edit modal
-async function queryEmployeeDetails(row, currentTargetTd) {
+async function queryEmployeeDetails(docId, currentTargetTd) {
 
-  let employeeDetails;
-  let queryEmployee = query(collection(db, "employee"), where("employeeId", "==", row));
-  let emp = await getDocs(queryEmployee);
 
-  emp.forEach(doc => {
+  const employeeRef = doc(db, "employee", docId)
+  const emp = await getDoc(employeeRef);
 
-    let data = doc.data();
+  console.log(emp.data());
 
-    employeeDetails = {
-      employeeId: data.employeeId,
-      employeeName: data.employeeName,
-      designation: data.designation,
-      mailID: data.mailID,
-      mobileNumber: data.mobileNumber,
-      skills: data.skills,
-      joiningDate: data.joiningDate
-    }
-  })
+  const employeeDetails = emp.data()
+  employeeDetails.id = docId;
 
   //if e.target is edit img, then open edit modal else show details
   if (currentTargetTd === "edit-icon") {
@@ -340,9 +332,8 @@ function addNewEmployee() {
     addEmployeeModal.classList.remove("show-modal");
   }
 
-  let id = newId();
   const add = "get-details-form";
-  pushEmployee(id, add);
+  pushEmployee(null, add);
 
 }
 
@@ -395,10 +386,14 @@ async function pushEmployee(id, formType) {
       mailID: mail.value,
       mobileNumber: mobile.value,
       workStatus: workStatus.value,
-      employeeId: id,
       joiningDate: joined.value,
       skills: skills
     }
+
+    if (!id) {
+      empDoc.employeeId = newId()
+    }
+
     console.log(empDoc)
 
     // form validation
@@ -451,17 +446,18 @@ async function pushEmployee(id, formType) {
 
 
     if (validaionFlag === 0) {
-      console.log("valid");
+      console.log("valid", id);
       // if update, delete existing record
-      if (formType === "edit-details-form") {
+      if (id) {
         console.log("im in the if condition for edit")
-        await updateDoc(doc(collection(db, "employee", id)), empDoc);
+        console.log("Im unique id", id);
+        await updateDoc(doc(db, "employee", id), empDoc)
         alert("done");
         // deleteEmployee(id);
       } else {
         // add new entry
         await setDoc(doc(collection(db, "employee")), empDoc);
-        alert("done");
+        alert("done set");
       }
     }
 
@@ -475,6 +471,7 @@ const editModal = document.querySelector(".edit-modal-overlay");
 
 function showEditModal(details) {
 
+  console.log(details);
   let temp = "";
   editModal.classList.add("show-modal");
 
@@ -642,7 +639,7 @@ function showEditModal(details) {
 
   // event listeners for submission of edit form
   const edit = "edit-details-form"
-  pushEmployee(details.employeeId, edit);
+  pushEmployee(details.id, edit);
 
 }
 
