@@ -35,6 +35,7 @@ function sortFunction(callback) {
 }
 
 //filter
+const filterContainer = document.querySelector(".filter-container");
 let sortOrder = orderBy("employeeId");
 queryEmployeeTable();
 
@@ -43,31 +44,49 @@ let filterArray = [];
 
 filterStatus.addEventListener("click", filterFunction);
 
-function filterFunction(e) {
+
+function filterFunction() {
   filterStatus.classList.add("filterClicked");
   filterOptions.classList.add("filterClicked");
 
-  let filterElement = e.target.getAttribute("class");
-  console.log(filterElement);
+  filterOptions.addEventListener("click", (e) => {
+    let filterElement = e.target.getAttribute("class");
+    console.log(filterElement);
 
-  if (filterElement === "Angular" || filterElement === "HTML/CSS" ||
-    filterElement === "React" || filterElement === "React Native" ||
-    filterElement === "Node") {
-    console.log(filterArray);
+    if (filterElement === "Angular" || filterElement === "HTML/CSS" ||
+      filterElement === "React" || filterElement === "React Native" ||
+      filterElement === "Node") {
 
-    filterArray.push(filterElement);
-    e.target.classList.add("selected-filter-element");
-  }
+      filterArray.push(filterElement);
 
-  else if (filterElement === "done") {
-    getFilteredEmployees(filterArray, sortOrder);
-    filterFlag = 1;
-    console.log("Filtered using", filterArray)
-    filterOptions.classList.remove("filterClicked");
-    filterStatus.removeEventListener("click", filterFunction);
-    filterStatus.addEventListener("click", removeFilters);
-  }
+      // adding background color to selection
+      e.target.classList.add("selected-filter-element");
+    }
+
+    else if (filterElement === "done") {
+
+      // exit without changes if empty array
+      if (filterArray.length === 0) {
+        console.log("Exiting filter without any changes");
+        filterOptions.classList.remove("filterClicked");
+      }
+
+      // filter using filter array
+      else {
+        getFilteredEmployees(filterArray, sortOrder);
+        filterFlag = 1;
+        console.log("Filtered using", filterArray);
+        filterOptions.classList.remove("filterClicked");
+      }
+    }
+
+    else if (filterElement === "clear") {
+      removeFilters();
+    }
+
+  })
 }
+
 
 function removeFilters() {
   queryEmployeeTable();

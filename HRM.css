@@ -144,7 +144,7 @@ input:focus {
   background-color: var(--themeWhite);
 }
 
-.filter-button {
+.filter-container {
   position: relative;
 }
 
@@ -155,7 +155,6 @@ input:focus {
 
 .filter-options {
   display: none;
-  position: relative;
   position: absolute;
   top: 18px;
   right: 0;
@@ -172,13 +171,26 @@ input:focus {
     width: 140px;
   }
 
-  > li:hover,
+  > li:not(:last-child):hover,
   li:focus {
     background-color: var(--selection);
   }
 
   > li.selected-filter-element {
     background-color: var(--themeGreen);
+  }
+
+  > .filter-buttons-container {
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  .clear,
+  .done {
+    width: 60px;
+    height: 25px;
+    border-radius: 3px;
+    background-color: var(--selection);
   }
 }
 
