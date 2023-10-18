@@ -574,16 +574,8 @@ function showEditModal(details) {
 
 }
 
-// Update entry in database
-// async function editEmployee() {
-//   await updateDoc(doc(collection(db, "employee")), {
-//     // key: value;
-//   })
-// }
-
 
 /* DELETE EMPLOYEE FROM TABLE */
-
 async function deleteEmployee(id) {
 
   let q = query(collection(db, "employee"), where("employeeId", "==", id));
