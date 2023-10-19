@@ -1,4 +1,5 @@
 import { db, getDocs, getDoc, collection, addDoc, query, where, doc, setDoc, limit, updateDoc, deleteDoc, orderBy } from "./firestore.js";
+
 // COMMON QUERYSELECTORS
 const tableBody = document.querySelector(".table-body");
 
@@ -107,13 +108,26 @@ function removeFilters() {
 
 
 // search
-const searchInput = document.querySelector(".search-input")
-const searchButton = document.querySelector(".search-button")
+const searchInput = document.querySelector(".search-input");
+const searchButton = document.querySelector(".search-button");
 searchButton.addEventListener("click", searchFunction);
 
-function searchFunction() {
+async function searchFunction() {
   let prompt = searchInput.value;
-  // let q = query()
+  console.log(prompt)
+
+  let searchQuery = query(collection(db, "employee"), where('employeeName', '==', prompt));
+  let searchedDocs = await getDocs(searchQuery);
+  console.log(searchedDocs)
+
+  showEmployeeTable(searchedDocs, sortOrder);
+  // searchedDocs.forEach((doc) => {
+
+  //   let data = doc.data();
+  //   console.log("Hello to", data);
+  //   showEmployeeTable(data);
+
+  // });
 }
 
 
@@ -125,6 +139,7 @@ async function queryEmployeeTable(sortOrder) {
   const employees = await getDocs(queryTable);
   showEmployeeTable(employees);
 }
+
 
 // FILTER
 
@@ -138,16 +153,17 @@ async function getFilteredEmployees(filterArray, sortOrder) {
 }
 
 
-
 // Displays fetched data as table 
 function showEmployeeTable(employees) {
 
   tableBody.innerHTML = "";
 
   let empData = [];
+
   employees.forEach((emp) => {
 
     let data = {
+      id: emp.id,
       employeeId: `${emp.get("employeeId")}`,
       employeeName: `${emp.get("employeeName")}`,
       designation: `${emp.get("designation")}`,
@@ -155,7 +171,6 @@ function showEmployeeTable(employees) {
       designation: `${emp.get("designation")}`,
       workStatus: `${emp.get("workStatus")}`
     }
-
     empData.push(data);
   });
 
@@ -173,7 +188,7 @@ function showEmployeeTable(employees) {
 
     // adding each employee as row to table body
     temp += `
-        <tr data-empID="${employee.employeeId}">
+        <tr data-docID="${employee.id}">
         <td>${employee.employeeId}</td>
         <td>${employee.employeeName}</td>
         <td>${employee.designation}</td>
@@ -197,37 +212,27 @@ const employeeDetailsModal = document.querySelector(".show-details-overlay");
 tableBody.addEventListener("click", function (e) {
 
   const targetRow = e.target.closest("tr");
-  const row = targetRow.getAttribute("data-empID");
+  const docId = targetRow.getAttribute("data-docID");
   const currentTargetTd = e.target.getAttribute("class");
   console.log(e.target)
   console.log(currentTargetTd)
 
-  queryEmployeeDetails(Number(row), currentTargetTd);
+  queryEmployeeDetails(docId, currentTargetTd);
 
 });
 
 
 // fetching employee details data for details and edit modal
-async function queryEmployeeDetails(row, currentTargetTd) {
+async function queryEmployeeDetails(docId, currentTargetTd) {
 
-  let employeeDetails;
-  let queryEmployee = query(collection(db, "employee"), where("employeeId", "==", row));
-  let emp = await getDocs(queryEmployee);
 
-  emp.forEach(doc => {
+  const employeeRef = doc(db, "employee", docId)
+  const emp = await getDoc(employeeRef);
 
-    let data = doc.data();
+  console.log(emp.data());
 
-    employeeDetails = {
-      employeeId: data.employeeId,
-      employeeName: data.employeeName,
-      designation: data.designation,
-      mailID: data.mailID,
-      mobileNumber: data.mobileNumber,
-      skills: data.skills,
-      joiningDate: data.joiningDate
-    }
-  })
+  const employeeDetails = emp.data()
+  employeeDetails.id = docId;
 
   //if e.target is edit img, then open edit modal else show details
   if (currentTargetTd === "edit-icon") {
@@ -327,9 +332,8 @@ function addNewEmployee() {
     addEmployeeModal.classList.remove("show-modal");
   }
 
-  let id = newId();
   const add = "get-details-form";
-  pushEmployee(id, add);
+  pushEmployee(null, add);
 
 }
 
@@ -357,8 +361,8 @@ async function pushEmployee(id, formType) {
   addForm.addEventListener("submit", async (e) => {
     e.preventDefault()
 
+
     let name1 = addForm.querySelector(".first-name");
-    console.log(name1);
     let name2 = addForm.querySelector(".last-name");
     let mobile = addForm.querySelector(".mobile-number");
     let mail = addForm.querySelector(".mail");
@@ -382,21 +386,81 @@ async function pushEmployee(id, formType) {
       mailID: mail.value,
       mobileNumber: mobile.value,
       workStatus: workStatus.value,
-      employeeId: id,
       joiningDate: joined.value,
       skills: skills
     }
-    console.log(empDoc)
 
-    // if update, delete existing record
-    if (formType === "edit-details-form") {
-      console.log("im in the if consition for edit dletion")
-      deleteEmployee(id);
+    if (!id) {
+      empDoc.employeeId = newId()
     }
 
-    //then add new entry
-    await setDoc(doc(collection(db, "employee")), empDoc);
-    alert("done");
+    console.log(empDoc)
+
+    // form validation
+    let validaionFlag = 0;
+
+    if (formType === "get-details-form") {
+
+      if (empDoc.employeeName == "") {
+        console.log("Bruh name");
+        validaionFlag++;
+        const nameError = document.querySelector(".nameValidation");
+        nameError.classList.add("val-error");
+      }
+      if (empDoc.mailID == "") {
+        console.log("Bruh mail");
+        validaionFlag++;
+        const mailError = document.querySelector(".mailValidation");
+        mailError.classList.add("val-error");
+      }
+      if (empDoc.designation == "") {
+        console.log("Bruh designation");
+        validaionFlag++;
+        const designationError = document.querySelector(".designationValidation");
+        designationError.classList.add("val-error");
+      }
+    }
+
+    if (formType === "edit-details-form") {
+
+      if (empDoc.employeeName == "") {
+        console.log("Bruh name");
+        validaionFlag++;
+        const nameError = document.querySelector(".nameVal");
+        nameError.classList.add("val-error");
+      }
+      if (empDoc.mailID == "") {
+        console.log("Bruh mail");
+        validaionFlag++;
+        const mailError = document.querySelector(".mailVal");
+        mailError.classList.add("val-error");
+      }
+      if (empDoc.designation == "") {
+        console.log("Bruh designation");
+        validaionFlag++;
+        const designationError = document.querySelector(".designationVal");
+        designationError.classList.add("val-error");
+      }
+
+    }
+
+
+    if (validaionFlag === 0) {
+      console.log("valid", id);
+      // if update, delete existing record
+      if (id) {
+        console.log("im in the if condition for edit")
+        console.log("Im unique id", id);
+        await updateDoc(doc(db, "employee", id), empDoc)
+        alert("done");
+        // deleteEmployee(id);
+      } else {
+        // add new entry
+        await setDoc(doc(collection(db, "employee")), empDoc);
+        alert("done set");
+      }
+    }
+
   })
 }
 
@@ -407,6 +471,7 @@ const editModal = document.querySelector(".edit-modal-overlay");
 
 function showEditModal(details) {
 
+  console.log(details);
   let temp = "";
   editModal.classList.add("show-modal");
 
@@ -416,14 +481,14 @@ function showEditModal(details) {
   <div class="edit-modal big-modal">
     <img src="assets/profile placeholder.png" alt="" />
 
-  
     <form action="" id="edit-details-form">
       <h3>Employee ID: ${details.employeeId}</h3>
       <div class="form-half-width">
         <div class="form-half-inner">
           <label for="first-name">First Name</label>
           <input type="text" class="first-name" value="${details.employeeName}" />
-        </div>
+          <p class="nameVal">Required field: enter name</p>
+          </div>
         <div class="form-half-inner">
           <label for="last-name">Last name:</label>
           <input type="text" class="last-name" />
@@ -452,6 +517,7 @@ function showEditModal(details) {
         <div class="form-half-inner">
           <label for="mail">Email ID:</label>
           <input type="email" class="mail" value="${details.mailID}"/>
+          <p class="mailVal">Required field: enter email ID</p>
         </div>
       </div>
 
@@ -477,6 +543,9 @@ function showEditModal(details) {
         <div class="form-half-inner">
           <label for="designation">Designation</label>
           <input type="text" class="designation"  value="${details.designation}"/>
+          <p class="designationVal">
+                Required field: enter designation
+              </p>
         </div>
       </div>
 
@@ -570,7 +639,7 @@ function showEditModal(details) {
 
   // event listeners for submission of edit form
   const edit = "edit-details-form"
-  pushEmployee(details.employeeId, edit);
+  pushEmployee(details.id, edit);
 
 }
 
