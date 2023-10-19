@@ -328,14 +328,15 @@ function addNewEmployee() {
   addModalClose.addEventListener("click", closeAddModal);
   cancelAdd.addEventListener("click", closeAddModal);
 
-  function closeAddModal() {
-    addEmployeeModal.classList.remove("show-modal");
-  }
-
   const add = "get-details-form";
   pushEmployee(null, add);
 
 }
+
+function closeAddModal() {
+  addEmployeeModal.classList.remove("show-modal");
+}
+
 
 // independant function to assign employee ID
 // call newId() to get new ID
@@ -362,8 +363,7 @@ async function pushEmployee(id, formType) {
     e.preventDefault()
 
 
-    let name1 = addForm.querySelector(".first-name");
-    let name2 = addForm.querySelector(".last-name");
+    let name1 = addForm.querySelector(".full-name1");
     let mobile = addForm.querySelector(".mobile-number");
     let mail = addForm.querySelector(".mail");
     let workStatus = addForm.querySelector(".work-status");
@@ -444,7 +444,6 @@ async function pushEmployee(id, formType) {
 
     }
 
-
     if (validaionFlag === 0) {
       console.log("valid", id);
       // if update, delete existing record
@@ -457,6 +456,11 @@ async function pushEmployee(id, formType) {
       } else {
         // add new entry
         await setDoc(doc(collection(db, "employee")), empDoc);
+        closeAddModal();
+        addForm.reset();
+        queryEmployeeTable(sortOrder);
+        const form = document.getElementById("edit-details-form");
+        addForm.reset();
         alert("done set");
       }
     }
@@ -483,16 +487,13 @@ function showEditModal(details) {
 
     <form action="" id="edit-details-form">
       <h3>Employee ID: ${details.employeeId}</h3>
-      <div class="form-half-width">
-        <div class="form-half-inner">
-          <label for="first-name">First Name</label>
-          <input type="text" class="first-name" value="${details.employeeName}" />
+      
+      <div>
+        <div class="full-name">
+          <label for="full-name">Full Name</label>
+          <input type="text" class="full-name1" value="${details.employeeName}" />
           <p class="nameVal">Required field: enter name</p>
           </div>
-        <div class="form-half-inner">
-          <label for="last-name">Last name:</label>
-          <input type="text" class="last-name" />
-        </div>
       </div>
 
       <div class="form-half-width">
@@ -550,8 +551,8 @@ function showEditModal(details) {
       </div>
 
       <h3>Skills</h3>
-      <label for="skills">Check off all applicable skills:</label>
       <div class="skills-container">
+      <label for="skills">Check off all applicable skills:</label>
         <input type="text" class="skills-input" />
 
         <ul class="skills-drop-down">
@@ -606,15 +607,17 @@ function showEditModal(details) {
           </li>
         </ul>
       </div>
+      <div class="work-status-container">
       <label for="work-status">Select work status:</label>
       <select name="work-status" class="work-status">
         <option value="office">Office</option>
         <option value="wfh">Work From home</option>
       </select>
-      <div>
-        <button type="button" class="cancel-edit">Cancel</button>
-        <button type="button">Delete employee</button>
-        <button type="submit">Submit</button>
+      </div>
+      <div class="form-button-container">
+        <button type="button" class="cancel-edit form-button">Cancel</button>
+        <button type="button" class="form-button delete-employee">Delete employee</button>
+        <button type="submit" class ="form-button">Submit</button>
       </div>
     </form>
 
@@ -630,12 +633,16 @@ function showEditModal(details) {
   const editModalClose = editModal.querySelector(".close-edit-modal");
   const cancelEdit = editModal.querySelector(".cancel-edit");
 
+  const deleteButton = editModal.querySelector(".delete-employee");
+  console.log(deleteButton);
+
+  deleteButton.addEventListener("click", () => {
+    console.log("details.id");
+    deleteEmployee(details.id, details.employeeName)
+  });
+
   editModalClose.addEventListener("click", closeEditModal);
   cancelEdit.addEventListener("click", closeEditModal);
-
-  function closeEditModal() {
-    editModal.classList.remove("show-modal");
-  }
 
   // event listeners for submission of edit form
   const edit = "edit-details-form"
@@ -643,22 +650,49 @@ function showEditModal(details) {
 
 }
 
+function closeEditModal() {
+  editModal.classList.remove("show-modal");
+  queryEmployeeTable(sortOrder);
+}
 
 /* DELETE EMPLOYEE FROM TABLE */
-async function deleteEmployee(id) {
 
-  let q = query(collection(db, "employee"), where("employeeId", "==", id));
-  let empDel = await getDocs(q);
 
-  let delId;
+async function deleteEmployee(id, name) {
 
-  empDel.forEach(emp => {
-    delId = emp.id;
-    console.log(delId)
-  });
+  const confirmDiv = document.querySelector(".confirm-deletion-modal-overlay");
+  confirmDiv.classList.add("show-modal");
 
-  await deleteDoc(doc(db, "employee", `${delId}`));
-  alert("deleted");
+  const fillName = confirmDiv.querySelector(".insert-delete-name");
+  fillName.innerHTML = name;
+
+  const confirmDeleteButton = confirmDiv.querySelector(".confirm-delete-button");
+  const cancelDeleteButton = confirmDiv.querySelector(".cancel-delete-button");
+
+  cancelDeleteButton.addEventListener("click", () => {
+    confirmDiv.classList.remove("show-modal");
+    closeEditModal();
+  })
+
+  confirmDeleteButton.addEventListener("click", async () => {
+
+    await deleteDoc(doc(db, "employee", id));
+    confirmDiv.classList.remove("show-modal");
+    closeEditModal();
+
+    const toastBox = document.querySelector(".toastOverlay")
+    const toastText = document.querySelector(".toast")
+
+    toastText.innerHTML = '<p>Deleted<span class="insert-delete-name"></span></p>';
+    toastBox.classList.add("show-modal");
+
+    setTimeout(() => {
+      toastBox.classList.remove("show-modal");
+    }, 2000);
+
+  })
+
+
 }
 
 
@@ -668,14 +702,15 @@ const skillsDropDown = document.querySelector(".skills-drop-down");
 skillInput.addEventListener("focus", showSkillDropDown);
 
 function showSkillDropDown() {
+
   skillsDropDown.classList.add("show-modal");
 
-  // skillsDropDown.onblur = function () {
-  //   skillsDropDown.classList.remove("show-modal");
-  // }
+  skillsDropDown.onblur = function () {
+    skillsDropDown.classList.remove("show-modal");
+  }
 
-  //close on clicking anywhere else
-  // document.addEventListener("click", (e) => {
+  // close on clicking anywhere else
+  // skillInput.addEventListener("click", (e) => {
 
   //   console.log(e.target);
   //   if (e.target !== "li") {
