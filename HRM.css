@@ -307,6 +307,7 @@ tr:first-child {
   padding: 30px;
   overflow: scroll;
 }
+
 .confirm-deletion-modal {
   display: flex;
   flex-direction: column;
@@ -329,6 +330,7 @@ tr:first-child {
   align-items: center;
   background-color: var(--themeGreen);
   transition: ease;
+  z-index: 3;
 }
 
 .insert-delete-name {
@@ -385,7 +387,8 @@ form select {
   margin-bottom: 10px;
 }
 
-.skills-drop-down {
+.skills-drop-down,
+.skills-drop-down-edit {
   display: none;
   width: 585px;
   background-color: var(--primaryLight);
@@ -393,7 +396,8 @@ form select {
   margin: 0;
 }
 
-.skills-drop-down.show-modal {
+.skills-drop-down.show-modal,
+.skills-drop-down-edit.show-modal {
   display: block;
 }
 

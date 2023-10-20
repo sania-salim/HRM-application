@@ -6,7 +6,25 @@ const tableBody = document.querySelector(".table-body");
 const filterStatus = document.querySelector(".filter-button");
 const filterOptions = document.querySelector(".filter-options");
 
-// const sortStatus = document.querySelector("")
+// toast
+const toastBox = document.querySelector(".toastOverlay")
+const toastText = document.querySelector(".toast")
+
+
+// listener for create button click
+const createButton = document.querySelector(".create-employee-button");
+const addEmployeeModal = document.querySelector(".add-modal-overlay");
+const addModalClose = document.querySelector(".close-add-modal");
+const cancelAdd = document.querySelector(".cancel-create");
+
+
+// event listeners for skill list in add modal
+const skillInput = document.querySelector(".skills-input");
+const skillsDropDown = document.querySelector(".skills-drop-down");
+
+
+
+
 
 //  FILTER, SORT, SEARCH STATUS
 
@@ -121,14 +139,10 @@ async function searchFunction() {
   console.log(searchedDocs)
 
   showEmployeeTable(searchedDocs, sortOrder);
-  // searchedDocs.forEach((doc) => {
 
-  //   let data = doc.data();
-  //   console.log("Hello to", data);
-  //   showEmployeeTable(data);
-
-  // });
 }
+
+
 
 
 /* FETCH AND DISPLAY TABLE */
@@ -142,11 +156,10 @@ async function queryEmployeeTable(sortOrder) {
 
 
 // FILTER
-
-// returns every document where the skills contains Node or Angular
+// returns every document where the are in filter array
 async function getFilteredEmployees(filterArray, sortOrder) {
   let filterQuery = query(collection(db, "employee"), sortOrder,
-    where('skills', 'array-contains-any', filterArray));
+    where('skills', 'array-contains-any', filterArray), limit(10));
 
   let filteredDocs = await getDocs(filterQuery);
   showEmployeeTable(filteredDocs);
@@ -204,6 +217,8 @@ function showEmployeeTable(employees) {
 
 
 
+
+
 /* FETCH AND DISPLAY MODAL */
 
 // listener for click on row and on edit icon
@@ -225,7 +240,6 @@ tableBody.addEventListener("click", function (e) {
 // fetching employee details data for details and edit modal
 async function queryEmployeeDetails(docId, currentTargetTd) {
 
-
   const employeeRef = doc(db, "employee", docId)
   const emp = await getDoc(employeeRef);
 
@@ -245,7 +259,6 @@ async function queryEmployeeDetails(docId, currentTargetTd) {
   }
 
 }
-
 
 // displaying fetched employee details in modal
 const employeeDetails = document.querySelector(".show-details-modal");
@@ -292,8 +305,8 @@ function showDetailsModal(details) {
   
           <h4>Skills</h4>
           <p>${details.skills}</p>
-          <h4>Projects</h4>
-          <p>${details.projectList}</p>
+          <!--<h4>Projects</h4>-->
+          <!--<p>${details.projectList}</p>-->
           <h4>Joined On</h4>
           <p>${details.joiningDate}</p>
 
@@ -309,14 +322,12 @@ function showDetailsModal(details) {
 }
 
 
+
+
+
+
+
 /* DISPLAY CREATE FORM AND ADD NEW ENTRY TO DATABASE */
-
-// listener for create button click
-const createButton = document.querySelector(".create-employee-button");
-const addEmployeeModal = document.querySelector(".add-modal-overlay");
-const addModalClose = document.querySelector(".close-add-modal");
-const cancelAdd = document.querySelector(".cancel-create");
-
 
 // Add employee modal on button click
 createButton.addEventListener("click", addNewEmployee);
@@ -333,9 +344,18 @@ function addNewEmployee() {
 
 }
 
+// close add modal
 function closeAddModal() {
   addEmployeeModal.classList.remove("show-modal");
 }
+
+// form skill slection drop-down on input focus
+skillInput.addEventListener("focus", () => {
+  skillsDropDown.classList.add("show-modal");
+
+});
+
+
 
 
 // independant function to assign employee ID
@@ -353,8 +373,12 @@ function count() {
 const newId = count();
 
 
-// push employee => add/edit
 
+
+
+
+
+// push employee => add/edit
 async function pushEmployee(id, formType) {
   const addForm = document.getElementById(`${formType}`);
   console.log(formType);
@@ -445,28 +469,54 @@ async function pushEmployee(id, formType) {
     }
 
     if (validaionFlag === 0) {
+
       console.log("valid", id);
+
       // if update, delete existing record
       if (id) {
-        console.log("im in the if condition for edit")
-        console.log("Im unique id", id);
+
         await updateDoc(doc(db, "employee", id), empDoc)
-        alert("done");
-        // deleteEmployee(id);
-      } else {
+
+        //toast upon edit
+        toastText.innerHTML = `<p>Edited<span class="insert-delete-name"> ${empDoc.employeeName}</span></p>`;
+        editModal.classList.remove("show-modal");
+
+        toastBox.classList.add("show-modal");
+        setTimeout(() => {
+          toastBox.classList.remove("show-modal");
+        }, 2000);
+
+      }
+
+      else {
         // add new entry
         await setDoc(doc(collection(db, "employee")), empDoc);
         closeAddModal();
         addForm.reset();
         queryEmployeeTable(sortOrder);
+
+        //toast upon edit
+        toastText.innerHTML = `<p>Added <span class="insert-delete-name">${empDoc.employeeName}</span></p>`;
+        addEmployeeModal.classList.remove("show-modal");
+
+        toastBox.classList.add("show-modal");
+        setTimeout(() => {
+          toastBox.classList.remove("show-modal");
+        }, 2000);
+
         const form = document.getElementById("edit-details-form");
         addForm.reset();
-        alert("done set");
+
       }
     }
 
   })
 }
+
+
+
+
+
 
 /* FETCH SELECTED EMPLOYEE DETAILS, DISPLAY FORM, UPDATE IN DB */
 
@@ -553,14 +603,14 @@ function showEditModal(details) {
       <h3>Skills</h3>
       <div class="skills-container">
       <label for="skills">Check off all applicable skills:</label>
-        <input type="text" class="skills-input" />
+        <input type="text" class="skills-input-edit" />
 
-        <ul class="skills-drop-down">
+        <ul class="skills-drop-down-edit">
           <li>
             <label for="skills"
               ><input
                 type="checkbox"
-                class="skill-select"
+                class="skill-select Angular"
                 value="Angular"
               />Angular</label
             >
@@ -570,7 +620,7 @@ function showEditModal(details) {
             <label for="skills"
               ><input
                 type="checkbox"
-                class="skill-select"
+                class="skill-select HTML/CSS"
                 value="HTML/CSS"
               />HTML/CSS</label
             >
@@ -580,7 +630,7 @@ function showEditModal(details) {
             <label for="skills"
               ><input
                 type="checkbox"
-                class="skill-select"
+                class="skill-select React"
                 value="React"
               />React</label
             >
@@ -590,8 +640,8 @@ function showEditModal(details) {
             <label for="skills"
               ><input
                 type="checkbox"
-                class="skill-select"
-                value="React"
+                class="skill-select React Native"
+                value="React Native"
               />React Native</label
             >
           </li>
@@ -600,7 +650,7 @@ function showEditModal(details) {
             <label for="skills"
               ><input
                 type="checkbox"
-                class="skill-select"
+                class="skill-select Node"
                 value="Node"
               />Node</label
             >
@@ -633,6 +683,31 @@ function showEditModal(details) {
   const editModalClose = editModal.querySelector(".close-edit-modal");
   const cancelEdit = editModal.querySelector(".cancel-edit");
 
+
+  // edit modal skill-list dropdown
+  const skillInputEdit = editModal.querySelector(".skills-input-edit");
+  const skillsDropDownEdit = editModal.querySelector(".skills-drop-down-edit");
+
+  skillInputEdit.addEventListener("focus", () => {
+
+    details.skills.forEach(element => {
+
+      editModal.querySelector(`.${element}`).checked = true;
+      // change form id 
+
+    });
+
+    console.log("focused on skills")
+    skillsDropDownEdit.classList.add("show-modal");
+
+    skillsDropDownEdit.onblur = function () {
+      skillsDropDownEdit.classList.remove("show-modal");
+    }
+
+  });
+
+
+  // delete employee listeners
   const deleteButton = editModal.querySelector(".delete-employee");
   console.log(deleteButton);
 
@@ -641,6 +716,7 @@ function showEditModal(details) {
     deleteEmployee(details.id, details.employeeName)
   });
 
+  // close edit modal listeners
   editModalClose.addEventListener("click", closeEditModal);
   cancelEdit.addEventListener("click", closeEditModal);
 
@@ -650,14 +726,21 @@ function showEditModal(details) {
 
 }
 
+// close edit modal
 function closeEditModal() {
   editModal.classList.remove("show-modal");
   queryEmployeeTable(sortOrder);
 }
 
+
+
+
+
+
+
+
+
 /* DELETE EMPLOYEE FROM TABLE */
-
-
 async function deleteEmployee(id, name) {
 
   const confirmDiv = document.querySelector(".confirm-deletion-modal-overlay");
@@ -680,10 +763,9 @@ async function deleteEmployee(id, name) {
     confirmDiv.classList.remove("show-modal");
     closeEditModal();
 
-    const toastBox = document.querySelector(".toastOverlay")
-    const toastText = document.querySelector(".toast")
 
-    toastText.innerHTML = '<p>Deleted<span class="insert-delete-name"></span></p>';
+    //toast upon delletion
+    toastText.innerHTML = `<p>Deleted<span class="insert-delete-name"> ${name}</span></p>`;
     toastBox.classList.add("show-modal");
 
     setTimeout(() => {
@@ -691,31 +773,28 @@ async function deleteEmployee(id, name) {
     }, 2000);
 
   })
-
-
 }
 
 
-// form skill slection drop-down on input focus
-const skillInput = document.querySelector(".skills-input");
-const skillsDropDown = document.querySelector(".skills-drop-down");
-skillInput.addEventListener("focus", showSkillDropDown);
 
-function showSkillDropDown() {
-
-  skillsDropDown.classList.add("show-modal");
-
-  skillsDropDown.onblur = function () {
-    skillsDropDown.classList.remove("show-modal");
-  }
+  // skillsDropDown.onblur = function () {
+  //   skillsDropDown.classList.remove("show-modal");
+  // }
 
   // close on clicking anywhere else
-  // skillInput.addEventListener("click", (e) => {
+  // setTimeout(() => {
+  //   skillInput.addEventListener("click", (e) => {
 
-  //   console.log(e.target);
-  //   if (e.target !== "li") {
-  //     skillsDropDown.classList.remove("show-modal");
-  //   }
-  // })
-}
+  //     console.log(e.target);
+  //     if (e.target !== "li") {
+  //       skillsDropDown.classList.remove("show-modal");
+  //     }
+  //   })
+  // }, 200);
+
+
+
+
+
+
 
