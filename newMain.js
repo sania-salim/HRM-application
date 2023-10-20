@@ -1,4 +1,4 @@
-import { db, getDocs, getDoc, collection, addDoc, query, where, doc, setDoc, limit, updateDoc, deleteDoc, orderBy } from "./firestore.js";
+import { db, getDocs, getDoc, collection, addDoc, query, where, doc, setDoc, limit, updateDoc, deleteDoc, orderBy, startAt } from "./firestore.js";
 
 // COMMON QUERYSELECTORS
 const tableBody = document.querySelector(".table-body");
@@ -24,7 +24,7 @@ const skillsDropDown = document.querySelector(".skills-drop-down");
 
 
 
-
+let currentLastId;
 
 //  FILTER, SORT, SEARCH STATUS
 
@@ -209,7 +209,7 @@ function showEmployeeTable(employees) {
         <td><img src=${workIcon} alt="" /></td>
         <td><img src="assets/edit.svg" alt=""  class="edit-icon"/></td>
       </tr>`
-
+    currentLastId = employee.employeeId;
   });
 
   tableBody.innerHTML = temp;
@@ -362,7 +362,7 @@ skillInput.addEventListener("focus", () => {
 // call newId() to get new ID
 function count() {
 
-  let countValue = 6;
+  let countValue = 13;
 
   function incrementCount() {
     countValue++;
@@ -490,6 +490,7 @@ async function pushEmployee(id, formType) {
 
       else {
         // add new entry
+        console.log("im in add condition");
         await setDoc(doc(collection(db, "employee")), empDoc);
         closeAddModal();
         addForm.reset();
@@ -498,7 +499,7 @@ async function pushEmployee(id, formType) {
         //toast upon edit
         toastText.innerHTML = `<p>Added <span class="insert-delete-name">${empDoc.employeeName}</span></p>`;
         addEmployeeModal.classList.remove("show-modal");
-
+        console.log("hihihi")
         toastBox.classList.add("show-modal");
         setTimeout(() => {
           toastBox.classList.remove("show-modal");
@@ -783,24 +784,37 @@ async function deleteEmployee(id, name) {
 
 
 
-  // skillsDropDown.onblur = function () {
-  //   skillsDropDown.classList.remove("show-modal");
-  // }
+// skillsDropDown.onblur = function () {
+//   skillsDropDown.classList.remove("show-modal");
+// }
 
-  // close on clicking anywhere else
-  // setTimeout(() => {
-  //   skillInput.addEventListener("click", (e) => {
+// close on clicking anywhere else
+// setTimeout(() => {
+//   skillInput.addEventListener("click", (e) => {
 
-  //     console.log(e.target);
-  //     if (e.target !== "li") {
-  //       skillsDropDown.classList.remove("show-modal");
-  //     }
-  //   })
-  // }, 200);
-
-
+//     console.log(e.target);
+//     if (e.target !== "li") {
+//       skillsDropDown.classList.remove("show-modal");
+//     }
+//   })
+// }, 200);
 
 
+const nextButton = document.querySelector(".next-page");
+const previousButton = document.querySelector(".previous-page");
+
+nextButton.addEventListener("click", () => {
+  fetchNextPage(currentLastId);
+})
+
+// pagination
+async function fetchNextPage(nextId) {
+
+  console.log("trying to fetch next page", nextId);
+  const pageQuery = query(collection(db, "employee"), sortOrder, orderBy("employeeId"), startAt(nextId));
+  let pageDocs = await getDocs(pageQuery);
+  showEmployeeTable(pageDocs);
+}
 
 
 

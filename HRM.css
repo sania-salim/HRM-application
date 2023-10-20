@@ -238,9 +238,14 @@ tr:first-child {
 }
 
 .pagination button {
-  width: 40.768px;
+  /* width: 40.768px; */
+  width: max-content;
   height: 40.768px;
-  margin: 24px 0;
+  margin: 24px;
+  background-color: var(--primaryLight);
+}
+.pagination button:hover {
+  background-color: var(--selection);
 }
 
 /* Modals */
