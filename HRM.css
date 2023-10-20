@@ -168,7 +168,8 @@ input:focus {
     text-align: right;
     justify-content: right;
     height: 20px;
-    width: 140px;
+    /* width: 140px; */
+    width: 100%;
   }
 
   > li:not(:last-child):hover,
@@ -316,6 +317,7 @@ tr:first-child {
   gap: 10px;
   width: 500px;
   height: 200px;
+  padding: 30px;
   background-color: white;
 }
 
@@ -324,13 +326,16 @@ tr:first-child {
   position: absolute;
   top: 40px;
   right: 40px;
-  width: 200px;
-  height: 50px;
+  width: 300px;
+  height: 100px;
   justify-content: center;
   align-items: center;
+  color: var(--themeWhite);
   background-color: var(--themeGreen);
   transition: ease;
   z-index: 3;
+  border-radius: 8px;
+  box-shadow: 5px 5px rgba(0, 0, 0, 0.034);
 }
 
 .insert-delete-name {
@@ -405,6 +410,11 @@ form ul {
   width: fit-content;
   list-style-type: none;
   padding: 12px;
+}
+
+form li label {
+  display: block;
+  width: 100%;
 }
 
 form li input {

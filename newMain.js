@@ -607,51 +607,56 @@ function showEditModal(details) {
 
         <ul class="skills-drop-down-edit">
           <li>
-            <label for="skills"
+            <label for="Angular-edit"
               ><input
                 type="checkbox"
                 class="skill-select Angular"
                 value="Angular"
+                id="Angular-edit"
               />Angular</label
             >
           </li>
 
           <li>
-            <label for="skills"
+            <label for="HTML/CSS-edit"
               ><input
                 type="checkbox"
                 class="skill-select HTML/CSS"
                 value="HTML/CSS"
+                id="HTML/CSS-edit"
               />HTML/CSS</label
             >
           </li>
 
           <li>
-            <label for="skills"
+            <label for="React-edit"
               ><input
                 type="checkbox"
                 class="skill-select React"
                 value="React"
+                id="React-edit"
               />React</label
             >
           </li>
 
           <li>
-            <label for="skills"
+            <label for="React Native-edit"
               ><input
                 type="checkbox"
                 class="skill-select React Native"
                 value="React Native"
+                id="React Native-edit"
               />React Native</label
             >
           </li>
 
           <li>
-            <label for="skills"
+            <label for="Node-edit"
               ><input
                 type="checkbox"
                 class="skill-select Node"
                 value="Node"
+                id="Node-edit"
               />Node</label
             >
           </li>
@@ -688,12 +693,13 @@ function showEditModal(details) {
   const skillInputEdit = editModal.querySelector(".skills-input-edit");
   const skillsDropDownEdit = editModal.querySelector(".skills-drop-down-edit");
 
+  console.log("Im here");
+
   skillInputEdit.addEventListener("focus", () => {
 
     details.skills.forEach(element => {
 
-      editModal.querySelector(`.${element}`).checked = true;
-      // change form id 
+      document.getElementById(`${element}-edit`).checked = true;
 
     });
 
