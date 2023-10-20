@@ -6,7 +6,25 @@ const tableBody = document.querySelector(".table-body");
 const filterStatus = document.querySelector(".filter-button");
 const filterOptions = document.querySelector(".filter-options");
 
-// const sortStatus = document.querySelector("")
+// toast
+const toastBox = document.querySelector(".toastOverlay")
+const toastText = document.querySelector(".toast")
+
+
+// listener for create button click
+const createButton = document.querySelector(".create-employee-button");
+const addEmployeeModal = document.querySelector(".add-modal-overlay");
+const addModalClose = document.querySelector(".close-add-modal");
+const cancelAdd = document.querySelector(".cancel-create");
+
+
+// event listeners for skill list in add modal
+const skillInput = document.querySelector(".skills-input");
+const skillsDropDown = document.querySelector(".skills-drop-down");
+
+
+
+
 
 //  FILTER, SORT, SEARCH STATUS
 
@@ -121,14 +139,10 @@ async function searchFunction() {
   console.log(searchedDocs)
 
   showEmployeeTable(searchedDocs, sortOrder);
-  // searchedDocs.forEach((doc) => {
 
-  //   let data = doc.data();
-  //   console.log("Hello to", data);
-  //   showEmployeeTable(data);
-
-  // });
 }
+
+
 
 
 /* FETCH AND DISPLAY TABLE */
@@ -142,11 +156,10 @@ async function queryEmployeeTable(sortOrder) {
 
 
 // FILTER
-
-// returns every document where the skills contains Node or Angular
+// returns every document where the are in filter array
 async function getFilteredEmployees(filterArray, sortOrder) {
   let filterQuery = query(collection(db, "employee"), sortOrder,
-    where('skills', 'array-contains-any', filterArray));
+    where('skills', 'array-contains-any', filterArray), limit(10));
 
   let filteredDocs = await getDocs(filterQuery);
   showEmployeeTable(filteredDocs);
@@ -204,6 +217,8 @@ function showEmployeeTable(employees) {
 
 
 
+
+
 /* FETCH AND DISPLAY MODAL */
 
 // listener for click on row and on edit icon
@@ -225,7 +240,6 @@ tableBody.addEventListener("click", function (e) {
 // fetching employee details data for details and edit modal
 async function queryEmployeeDetails(docId, currentTargetTd) {
 
-
   const employeeRef = doc(db, "employee", docId)
   const emp = await getDoc(employeeRef);
 
@@ -245,7 +259,6 @@ async function queryEmployeeDetails(docId, currentTargetTd) {
   }
 
 }
-
 
 // displaying fetched employee details in modal
 const employeeDetails = document.querySelector(".show-details-modal");
@@ -292,8 +305,8 @@ function showDetailsModal(details) {
   
           <h4>Skills</h4>
           <p>${details.skills}</p>
-          <h4>Projects</h4>
-          <p>${details.projectList}</p>
+          <!--<h4>Projects</h4>-->
+          <!--<p>${details.projectList}</p>-->
           <h4>Joined On</h4>
           <p>${details.joiningDate}</p>
 
@@ -309,14 +322,12 @@ function showDetailsModal(details) {
 }
 
 
+
+
+
+
+
 /* DISPLAY CREATE FORM AND ADD NEW ENTRY TO DATABASE */
-
-// listener for create button click
-const createButton = document.querySelector(".create-employee-button");
-const addEmployeeModal = document.querySelector(".add-modal-overlay");
-const addModalClose = document.querySelector(".close-add-modal");
-const cancelAdd = document.querySelector(".cancel-create");
-
 
 // Add employee modal on button click
 createButton.addEventListener("click", addNewEmployee);
@@ -328,14 +339,24 @@ function addNewEmployee() {
   addModalClose.addEventListener("click", closeAddModal);
   cancelAdd.addEventListener("click", closeAddModal);
 
-  function closeAddModal() {
-    addEmployeeModal.classList.remove("show-modal");
-  }
-
   const add = "get-details-form";
   pushEmployee(null, add);
 
 }
+
+// close add modal
+function closeAddModal() {
+  addEmployeeModal.classList.remove("show-modal");
+}
+
+// form skill slection drop-down on input focus
+skillInput.addEventListener("focus", () => {
+  skillsDropDown.classList.add("show-modal");
+
+});
+
+
+
 
 // independant function to assign employee ID
 // call newId() to get new ID
@@ -352,8 +373,12 @@ function count() {
 const newId = count();
 
 
-// push employee => add/edit
 
+
+
+
+
+// push employee => add/edit
 async function pushEmployee(id, formType) {
   const addForm = document.getElementById(`${formType}`);
   console.log(formType);
@@ -362,8 +387,7 @@ async function pushEmployee(id, formType) {
     e.preventDefault()
 
 
-    let name1 = addForm.querySelector(".first-name");
-    let name2 = addForm.querySelector(".last-name");
+    let name1 = addForm.querySelector(".full-name1");
     let mobile = addForm.querySelector(".mobile-number");
     let mail = addForm.querySelector(".mail");
     let workStatus = addForm.querySelector(".work-status");
@@ -444,25 +468,55 @@ async function pushEmployee(id, formType) {
 
     }
 
-
     if (validaionFlag === 0) {
+
       console.log("valid", id);
+
       // if update, delete existing record
       if (id) {
-        console.log("im in the if condition for edit")
-        console.log("Im unique id", id);
+
         await updateDoc(doc(db, "employee", id), empDoc)
-        alert("done");
-        // deleteEmployee(id);
-      } else {
+
+        //toast upon edit
+        toastText.innerHTML = `<p>Edited<span class="insert-delete-name"> ${empDoc.employeeName}</span></p>`;
+        editModal.classList.remove("show-modal");
+
+        toastBox.classList.add("show-modal");
+        setTimeout(() => {
+          toastBox.classList.remove("show-modal");
+        }, 2000);
+
+      }
+
+      else {
         // add new entry
         await setDoc(doc(collection(db, "employee")), empDoc);
-        alert("done set");
+        closeAddModal();
+        addForm.reset();
+        queryEmployeeTable(sortOrder);
+
+        //toast upon edit
+        toastText.innerHTML = `<p>Added <span class="insert-delete-name">${empDoc.employeeName}</span></p>`;
+        addEmployeeModal.classList.remove("show-modal");
+
+        toastBox.classList.add("show-modal");
+        setTimeout(() => {
+          toastBox.classList.remove("show-modal");
+        }, 2000);
+
+        const form = document.getElementById("edit-details-form");
+        addForm.reset();
+
       }
     }
 
   })
 }
+
+
+
+
+
 
 /* FETCH SELECTED EMPLOYEE DETAILS, DISPLAY FORM, UPDATE IN DB */
 
@@ -483,16 +537,13 @@ function showEditModal(details) {
 
     <form action="" id="edit-details-form">
       <h3>Employee ID: ${details.employeeId}</h3>
-      <div class="form-half-width">
-        <div class="form-half-inner">
-          <label for="first-name">First Name</label>
-          <input type="text" class="first-name" value="${details.employeeName}" />
+      
+      <div>
+        <div class="full-name">
+          <label for="full-name">Full Name</label>
+          <input type="text" class="full-name1" value="${details.employeeName}" />
           <p class="nameVal">Required field: enter name</p>
           </div>
-        <div class="form-half-inner">
-          <label for="last-name">Last name:</label>
-          <input type="text" class="last-name" />
-        </div>
       </div>
 
       <div class="form-half-width">
@@ -550,71 +601,78 @@ function showEditModal(details) {
       </div>
 
       <h3>Skills</h3>
-      <label for="skills">Check off all applicable skills:</label>
       <div class="skills-container">
-        <input type="text" class="skills-input" />
+      <label for="skills">Check off all applicable skills:</label>
+        <input type="text" class="skills-input-edit" />
 
-        <ul class="skills-drop-down">
+        <ul class="skills-drop-down-edit">
           <li>
-            <label for="skills"
+            <label for="Angular-edit"
               ><input
                 type="checkbox"
-                class="skill-select"
+                class="skill-select Angular"
                 value="Angular"
+                id="Angular-edit"
               />Angular</label
             >
           </li>
 
           <li>
-            <label for="skills"
+            <label for="HTML/CSS-edit"
               ><input
                 type="checkbox"
-                class="skill-select"
+                class="skill-select HTML/CSS"
                 value="HTML/CSS"
+                id="HTML/CSS-edit"
               />HTML/CSS</label
             >
           </li>
 
           <li>
-            <label for="skills"
+            <label for="React-edit"
               ><input
                 type="checkbox"
-                class="skill-select"
+                class="skill-select React"
                 value="React"
+                id="React-edit"
               />React</label
             >
           </li>
 
           <li>
-            <label for="skills"
+            <label for="React Native-edit"
               ><input
                 type="checkbox"
-                class="skill-select"
-                value="React"
+                class="skill-select React Native"
+                value="React Native"
+                id="React Native-edit"
               />React Native</label
             >
           </li>
 
           <li>
-            <label for="skills"
+            <label for="Node-edit"
               ><input
                 type="checkbox"
-                class="skill-select"
+                class="skill-select Node"
                 value="Node"
+                id="Node-edit"
               />Node</label
             >
           </li>
         </ul>
       </div>
+      <div class="work-status-container">
       <label for="work-status">Select work status:</label>
       <select name="work-status" class="work-status">
         <option value="office">Office</option>
         <option value="wfh">Work From home</option>
       </select>
-      <div>
-        <button type="button" class="cancel-edit">Cancel</button>
-        <button type="button">Delete employee</button>
-        <button type="submit">Submit</button>
+      </div>
+      <div class="form-button-container">
+        <button type="button" class="cancel-edit form-button">Cancel</button>
+        <button type="button" class="form-button delete-employee">Delete employee</button>
+        <button type="submit" class ="form-button">Submit</button>
       </div>
     </form>
 
@@ -630,12 +688,43 @@ function showEditModal(details) {
   const editModalClose = editModal.querySelector(".close-edit-modal");
   const cancelEdit = editModal.querySelector(".cancel-edit");
 
+
+  // edit modal skill-list dropdown
+  const skillInputEdit = editModal.querySelector(".skills-input-edit");
+  const skillsDropDownEdit = editModal.querySelector(".skills-drop-down-edit");
+
+  console.log("Im here");
+
+  skillInputEdit.addEventListener("focus", () => {
+
+    details.skills.forEach(element => {
+
+      document.getElementById(`${element}-edit`).checked = true;
+
+    });
+
+    console.log("focused on skills")
+    skillsDropDownEdit.classList.add("show-modal");
+
+    skillsDropDownEdit.onblur = function () {
+      skillsDropDownEdit.classList.remove("show-modal");
+    }
+
+  });
+
+
+  // delete employee listeners
+  const deleteButton = editModal.querySelector(".delete-employee");
+  console.log(deleteButton);
+
+  deleteButton.addEventListener("click", () => {
+    console.log("details.id");
+    deleteEmployee(details.id, details.employeeName)
+  });
+
+  // close edit modal listeners
   editModalClose.addEventListener("click", closeEditModal);
   cancelEdit.addEventListener("click", closeEditModal);
-
-  function closeEditModal() {
-    editModal.classList.remove("show-modal");
-  }
 
   // event listeners for submission of edit form
   const edit = "edit-details-form"
@@ -643,44 +732,75 @@ function showEditModal(details) {
 
 }
 
-
-/* DELETE EMPLOYEE FROM TABLE */
-async function deleteEmployee(id) {
-
-  let q = query(collection(db, "employee"), where("employeeId", "==", id));
-  let empDel = await getDocs(q);
-
-  let delId;
-
-  empDel.forEach(emp => {
-    delId = emp.id;
-    console.log(delId)
-  });
-
-  await deleteDoc(doc(db, "employee", `${delId}`));
-  alert("deleted");
+// close edit modal
+function closeEditModal() {
+  editModal.classList.remove("show-modal");
+  queryEmployeeTable(sortOrder);
 }
 
 
-// form skill slection drop-down on input focus
-const skillInput = document.querySelector(".skills-input");
-const skillsDropDown = document.querySelector(".skills-drop-down");
-skillInput.addEventListener("focus", showSkillDropDown);
 
-function showSkillDropDown() {
-  skillsDropDown.classList.add("show-modal");
+
+
+
+
+
+
+/* DELETE EMPLOYEE FROM TABLE */
+async function deleteEmployee(id, name) {
+
+  const confirmDiv = document.querySelector(".confirm-deletion-modal-overlay");
+  confirmDiv.classList.add("show-modal");
+
+  const fillName = confirmDiv.querySelector(".insert-delete-name");
+  fillName.innerHTML = name;
+
+  const confirmDeleteButton = confirmDiv.querySelector(".confirm-delete-button");
+  const cancelDeleteButton = confirmDiv.querySelector(".cancel-delete-button");
+
+  cancelDeleteButton.addEventListener("click", () => {
+    confirmDiv.classList.remove("show-modal");
+    closeEditModal();
+  })
+
+  confirmDeleteButton.addEventListener("click", async () => {
+
+    await deleteDoc(doc(db, "employee", id));
+    confirmDiv.classList.remove("show-modal");
+    closeEditModal();
+
+
+    //toast upon delletion
+    toastText.innerHTML = `<p>Deleted<span class="insert-delete-name"> ${name}</span></p>`;
+    toastBox.classList.add("show-modal");
+
+    setTimeout(() => {
+      toastBox.classList.remove("show-modal");
+    }, 2000);
+
+  })
+}
+
+
 
   // skillsDropDown.onblur = function () {
   //   skillsDropDown.classList.remove("show-modal");
   // }
 
-  //close on clicking anywhere else
-  // document.addEventListener("click", (e) => {
+  // close on clicking anywhere else
+  // setTimeout(() => {
+  //   skillInput.addEventListener("click", (e) => {
 
-  //   console.log(e.target);
-  //   if (e.target !== "li") {
-  //     skillsDropDown.classList.remove("show-modal");
-  //   }
-  // })
-}
+  //     console.log(e.target);
+  //     if (e.target !== "li") {
+  //       skillsDropDown.classList.remove("show-modal");
+  //     }
+  //   })
+  // }, 200);
+
+
+
+
+
+
 

@@ -168,7 +168,8 @@ input:focus {
     text-align: right;
     justify-content: right;
     height: 20px;
-    width: 140px;
+    /* width: 140px; */
+    width: 100%;
   }
 
   > li:not(:last-child):hover,
@@ -280,12 +281,15 @@ tr:first-child {
 
 /* Add modal */
 .add-modal-overlay,
-.edit-modal-overlay {
+.edit-modal-overlay,
+.confirm-deletion-modal-overlay,
+.toastOverlay {
   display: none;
 }
 
 .add-modal-overlay.show-modal,
-.edit-modal-overlay.show-modal {
+.edit-modal-overlay.show-modal,
+.confirm-deletion-modal-overlay.show-modal {
   inset: 0;
   display: flex;
   background-color: #1111115d;
@@ -305,10 +309,48 @@ tr:first-child {
   overflow: scroll;
 }
 
+.confirm-deletion-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 500px;
+  height: 200px;
+  padding: 30px;
+  background-color: white;
+}
+
+.toastOverlay.show-modal {
+  display: flex;
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  width: 300px;
+  height: 100px;
+  justify-content: center;
+  align-items: center;
+  color: var(--themeWhite);
+  background-color: var(--themeGreen);
+  transition: ease;
+  z-index: 3;
+  border-radius: 8px;
+  box-shadow: 5px 5px rgba(0, 0, 0, 0.034);
+}
+
+.insert-delete-name {
+  font-weight: 400;
+}
+
 form {
   display: flex;
   flex-direction: column;
   gap: 30px;
+}
+
+form h3 {
+  margin: 0;
+  color: var(--primaryDark);
 }
 
 .form-half-width {
@@ -320,6 +362,18 @@ form {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.full-name,
+.work-status-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.full-name input {
+  width: 585px;
+  height: 30px;
 }
 
 .form-half-width input,
@@ -334,7 +388,12 @@ form select {
   gap: 0;
 }
 
-.skills-drop-down {
+.skills-container label {
+  margin-bottom: 10px;
+}
+
+.skills-drop-down,
+.skills-drop-down-edit {
   display: none;
   width: 585px;
   background-color: var(--primaryLight);
@@ -342,7 +401,8 @@ form select {
   margin: 0;
 }
 
-.skills-drop-down.show-modal {
+.skills-drop-down.show-modal,
+.skills-drop-down-edit.show-modal {
   display: block;
 }
 
@@ -352,12 +412,36 @@ form ul {
   padding: 12px;
 }
 
+form li label {
+  display: block;
+  width: 100%;
+}
+
 form li input {
   height: max-content;
   margin: 10px;
 }
 
 form li:hover {
+  background-color: var(--selection);
+}
+
+.form-button-container {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.form-button {
+  width: 150px;
+  height: 40px;
+  border-radius: 4px;
+  background-color: var(--primaryLight);
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.form-button:hover {
+  box-shadow: none;
   background-color: var(--selection);
 }
 
@@ -370,6 +454,8 @@ form li:hover {
 .mailVal,
 .designationVal {
   display: none;
+  padding: 0;
+  margin: 0;
 }
 
 .nameValidation.val-error,
