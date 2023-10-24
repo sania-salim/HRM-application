@@ -129,148 +129,164 @@
     <!-- Add new employee modal -->
     <div class="add-modal-overlay">
       <div class="add-modal big-modal">
-        <img src="assets/profile placeholder.png" alt="" />
-
         <form action="" id="get-details-form">
-          <h3>Employee ID: 213</h3>
-          <div>
-            <div class="full-name">
-              <label for="full-name">Full Name</label>
-              <input type="text" class="full-name1" />
-              <p class="nameValidation">Required field: enter name</p>
-            </div>
+          <div class="form-divisions">
+            <label for="profile-input-add" class="profile-pic-container"
+              ><img
+                src="assets/profile placeholder.png"
+                alt="profile-pic"
+                id="profile-image-add"
+                class="profile-pic" />
+              <input
+                type="file"
+                id="profile-input-add"
+                accept="image/png, image/jpeg"
+            /></label>
           </div>
 
-          <div class="form-half-width">
-            <div class="form-half-inner">
-              <label for="dob">Date of birth:</label>
-              <input type="date" class="dob" />
-            </div>
-            <div class="form-half-inner">
-              <label for="joining-date">Date of joining:</label>
-              <input type="date" class="joining-date" />
-            </div>
-          </div>
-
-          <h3>Contact Details</h3>
-
-          <div class="form-half-width">
-            <div class="form-half-inner">
-              <label for="phone-number">Phone number:</label>
-              <input type="tel" class="mobile-number" />
+          <div class="form-divisions">
+            <h3>Employee ID: 213</h3>
+            <div>
+              <div class="full-name">
+                <label for="full-name">Full Name</label>
+                <input type="text" class="full-name1" />
+                <p class="nameValidation">Required field: enter name</p>
+              </div>
             </div>
 
-            <div class="form-half-inner">
-              <label for="mail">Email ID:</label>
-              <input type="email" class="mail" />
-              <p class="mailValidation">Required field: enter email ID</p>
+            <div class="form-half-width">
+              <div class="form-half-inner">
+                <label for="dob">Date of birth:</label>
+                <input type="date" class="dob" />
+              </div>
+              <div class="form-half-inner">
+                <label for="joining-date">Date of joining:</label>
+                <input type="date" class="joining-date" />
+              </div>
             </div>
-          </div>
 
-          <h3>Employment details</h3>
-          <div class="form-half-width">
-            <div class="form-half-inner">
-              <label for="reporting-location">Reporting location:</label>
-              <select name="reporting-location" id="reporting-location">
-                <option value="tvm-technopark">
-                  Ganga Building, Technopark Phase-3, Trivanrdum
-                </option>
-                <option value="tvm-vazhutacaud">
-                  Artech Magnet Vazhuthacaud Trivandrum
-                </option>
-                <option value="cochin">Lulu Cyber Tower Infopark Cochin</option>
-                <option value="calicut">UL Cyber Park Calicut</option>
-                <option value="koratty">
-                  Nisagandhi, Infopark Koratty, Thrissur
-                </option>
+            <h3>Contact Details</h3>
+
+            <div class="form-half-width">
+              <div class="form-half-inner">
+                <label for="phone-number">Phone number:</label>
+                <input type="tel" class="mobile-number" />
+              </div>
+
+              <div class="form-half-inner">
+                <label for="mail">Email ID:</label>
+                <input type="email" class="mail" />
+                <p class="mailValidation">Required field: enter email ID</p>
+              </div>
+            </div>
+
+            <h3>Employment details</h3>
+            <div class="form-half-width">
+              <div class="form-half-inner">
+                <label for="reporting-location">Reporting location:</label>
+                <select name="reporting-location" id="reporting-location">
+                  <option value="tvm-technopark">
+                    Ganga Building, Technopark Phase-3, Trivanrdum
+                  </option>
+                  <option value="tvm-vazhutacaud">
+                    Artech Magnet Vazhuthacaud Trivandrum
+                  </option>
+                  <option value="cochin">
+                    Lulu Cyber Tower Infopark Cochin
+                  </option>
+                  <option value="calicut">UL Cyber Park Calicut</option>
+                  <option value="koratty">
+                    Nisagandhi, Infopark Koratty, Thrissur
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-half-inner">
+                <label for="designation">Designation</label>
+                <input type="text" class="designation" />
+                <p class="designationValidation">
+                  Required field: enter designation
+                </p>
+              </div>
+            </div>
+
+            <h3>Skills</h3>
+            <div class="skills-container">
+              <label for="skills">Check off all applicable skills:</label>
+
+              <input type="text" class="skills-input" />
+
+              <ul class="skills-drop-down">
+                <li>
+                  <label for="Angular"
+                    ><input
+                      type="checkbox"
+                      class="skill-select"
+                      value="Angular"
+                      id="Angular"
+                    />Angular</label
+                  >
+                </li>
+
+                <li>
+                  <label for="HTML/CSS"
+                    ><input
+                      type="checkbox"
+                      class="skill-select"
+                      value="HTML/CSS"
+                      id="HTML/CSS"
+                    />HTML/CSS</label
+                  >
+                </li>
+
+                <li>
+                  <label for="React"
+                    ><input
+                      type="checkbox"
+                      class="skill-select"
+                      value="React"
+                      id="React"
+                    />React</label
+                  >
+                </li>
+
+                <li>
+                  <label for="React Native"
+                    ><input
+                      type="checkbox"
+                      class="skill-select"
+                      value="React Native"
+                      id="React Native"
+                    />React Native</label
+                  >
+                </li>
+
+                <li>
+                  <label for="Node"
+                    ><input
+                      type="checkbox"
+                      class="skill-select"
+                      value="Node"
+                      id="Node"
+                    />Node</label
+                  >
+                </li>
+              </ul>
+            </div>
+            <div class="work-status-container">
+              <label for="work-status">Select work status:</label>
+              <select name="work-status" class="work-status">
+                <option value="office">Office</option>
+                <option value="wfh">Work From home</option>
               </select>
             </div>
 
-            <div class="form-half-inner">
-              <label for="designation">Designation</label>
-              <input type="text" class="designation" />
-              <p class="designationValidation">
-                Required field: enter designation
-              </p>
+            <div class="form-button-container">
+              <button type="button" class="cancel-create form-button">
+                Cancel
+              </button>
+              <button type="submit" class="form-button">Create</button>
             </div>
-          </div>
-
-          <h3>Skills</h3>
-          <div class="skills-container">
-            <label for="skills">Check off all applicable skills:</label>
-
-            <input type="text" class="skills-input" />
-
-            <ul class="skills-drop-down">
-              <li>
-                <label for="Angular"
-                  ><input
-                    type="checkbox"
-                    class="skill-select"
-                    value="Angular"
-                    id="Angular"
-                  />Angular</label
-                >
-              </li>
-
-              <li>
-                <label for="HTML/CSS"
-                  ><input
-                    type="checkbox"
-                    class="skill-select"
-                    value="HTML/CSS"
-                    id="HTML/CSS"
-                  />HTML/CSS</label
-                >
-              </li>
-
-              <li>
-                <label for="React"
-                  ><input
-                    type="checkbox"
-                    class="skill-select"
-                    value="React"
-                    id="React"
-                  />React</label
-                >
-              </li>
-
-              <li>
-                <label for="React Native"
-                  ><input
-                    type="checkbox"
-                    class="skill-select"
-                    value="React Native"
-                    id="React Native"
-                  />React Native</label
-                >
-              </li>
-
-              <li>
-                <label for="Node"
-                  ><input
-                    type="checkbox"
-                    class="skill-select"
-                    value="Node"
-                    id="Node"
-                  />Node</label
-                >
-              </li>
-            </ul>
-          </div>
-          <div class="work-status-container">
-            <label for="work-status">Select work status:</label>
-            <select name="work-status" class="work-status">
-              <option value="office">Office</option>
-              <option value="wfh">Work From home</option>
-            </select>
-          </div>
-
-          <div class="form-button-container">
-            <button type="button" class="cancel-create form-button">
-              Cancel
-            </button>
-            <button type="submit" class="form-button">Create</button>
           </div>
         </form>
 

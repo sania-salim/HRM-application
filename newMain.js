@@ -272,7 +272,7 @@ function showDetailsModal(details) {
   temp = `
           <div class="photo-and-basic-details">
             <img
-              src="assets/Profile photo.png"
+              src="${details.profilePhoto}"
               alt="Profile photo"
               class="profile-pic"
             />
@@ -365,7 +365,7 @@ skillInput.addEventListener("focus", () => {
 // call newId() to get new ID
 function count() {
 
-  let countValue = 13;
+  let countValue = 16;
 
   function incrementCount() {
     countValue++;
@@ -374,7 +374,6 @@ function count() {
   return incrementCount;
 }
 const newId = count();
-
 
 
 
@@ -396,6 +395,7 @@ async function pushEmployee(id, formType) {
     let workStatus = addForm.querySelector(".work-status");
     let joined = addForm.querySelector(".joining-date");
     let designation = addForm.querySelector(".designation");
+    let profilePhoto = addForm.querySelector(".profile-pic");
 
     let skills = [];    //array that stores selected skills
     let skillInputs = document.querySelectorAll(".skill-select");
@@ -414,7 +414,8 @@ async function pushEmployee(id, formType) {
       mobileNumber: mobile.value,
       workStatus: workStatus.value,
       joiningDate: joined.value,
-      skills: skills
+      skills: skills,
+      profilePhoto: profilePhoto.getAttribute("src")
     }
 
     if (!id) {
@@ -517,11 +518,6 @@ async function pushEmployee(id, formType) {
   })
 }
 
-
-
-
-
-
 /* FETCH SELECTED EMPLOYEE DETAILS, DISPLAY FORM, UPDATE IN DB */
 
 // Display details in form
@@ -537,9 +533,22 @@ function showEditModal(details) {
 
   temp = `
   <div class="edit-modal big-modal">
-    <img src="assets/profile placeholder.png" alt="" />
-
     <form action="" id="edit-details-form">
+      <div class="form-divisions">
+      <label for="profile-input-edit" class="profile-pic-container"
+              ><img
+                src="${details.profilePhoto}"
+                alt="profile-pic"
+                id="profile-image-edit"
+                class="profile-pic" />
+              <input
+                type="file"
+                id="profile-input-edit"
+                accept="image/png, image/jpeg"
+            /></label>
+      </div>
+    
+      <div class="form-divisions">
       <h3>Employee ID: ${details.employeeId}</h3>
       
       <div>
@@ -678,6 +687,7 @@ function showEditModal(details) {
         <button type="button" class="form-button delete-employee">Delete employee</button>
         <button type="submit" class ="form-button">Submit</button>
       </div>
+      </div>
     </form>
 
     <img
@@ -713,6 +723,34 @@ function showEditModal(details) {
     skillsDropDownEdit.onblur = function () {
       skillsDropDownEdit.classList.remove("show-modal");
     }
+
+
+    // image upload in edit modal
+    const profileInput = document.querySelector("#profile-input-edit");
+    const profileImageContainer = document.querySelector("#profile-image-edit");
+
+    const profileImage = profileInput.files[0];
+
+
+    const addImgProp = function (profileImage) {
+      const reader = new FileReader();
+
+      return new Promise((resolve) => {
+        reader.addEventListener(
+          'load',
+          () => {
+            resolve(reader.result);
+          },
+          false
+        );
+        console.log("hi", profileImage);
+        reader.readAsDataURL(profileImage);
+      });
+    };
+
+    addImgProp(profileImage).then((data) => {
+      profileImageContainer.setAttribute("src", data);
+    })
 
   });
 
@@ -837,6 +875,48 @@ async function fetchPreviousPage() {
 
   showEmployeeTable(pageDocs);
 }
+
+
+
+
+// image upload in add modal
+const profileInput = document.querySelector("#profile-input-add");
+const profileImageContainer = document.querySelector("#profile-image-add");
+
+const profileImage = profileInput.files[0];
+
+const addImgProp = function (profileImage) {
+  const reader = new FileReader();
+
+  return new Promise((resolve) => {
+    reader.addEventListener(
+      'load',
+      () => {
+        resolve(reader.result);
+      },
+      false
+    );
+    reader.readAsDataURL(profileImage);
+  });
+};
+
+addImgProp(profileImage).then((data) => {
+  profileImageContainer.setAttribute("src", data);
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

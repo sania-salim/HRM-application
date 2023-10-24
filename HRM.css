@@ -11,8 +11,24 @@
   --themeGreen: #5faf5e;
 }
 
+#profile-input-add,
+#profile-input-edit {
+  display: none;
+}
+
+.profile-pic-container {
+  max-width: fit-content;
+  max-height: fit-content;
+}
+
 .common-icon {
   height: 21px;
+}
+
+.profile-pic {
+  width: 170px;
+  height: 210px;
+  border-radius: 3px;
 }
 
 .close-button {
@@ -35,7 +51,9 @@
 .big-modal {
   position: fixed;
   z-index: 2;
-  width: 650px;
+  width: max-content;
+  max-width: 70vw;
+  height: 600px;
   background-color: var(--themeWhite);
   padding: 30px;
   border-radius: 4px;
@@ -307,9 +325,7 @@ tr:first-child {
 .add-modal,
 .edit-modal {
   display: flex;
-  width: 1030px;
-  height: 600px;
-  gap: 90px;
+  gap: 50px;
   padding: 30px;
   overflow: scroll;
 }
@@ -348,6 +364,11 @@ tr:first-child {
 }
 
 form {
+  display: flex;
+  gap: 30px;
+}
+
+.form-divisions {
   display: flex;
   flex-direction: column;
   gap: 30px;
