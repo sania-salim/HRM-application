@@ -1,4 +1,4 @@
-import { db, getDocs, getDoc, collection, addDoc, query, where, doc, setDoc, limit, updateDoc, deleteDoc, orderBy, startAt } from "./firestore.js";
+import { db, getDocs, getDoc, collection, addDoc, query, where, doc, setDoc, limit, updateDoc, deleteDoc, orderBy, startAt, startAfter } from "./firestore.js";
 
 // COMMON QUERYSELECTORS
 const tableBody = document.querySelector(".table-body");
@@ -22,9 +22,6 @@ const cancelAdd = document.querySelector(".cancel-create");
 const skillInput = document.querySelector(".skills-input");
 const skillsDropDown = document.querySelector(".skills-drop-down");
 
-
-
-let currentLastId;
 
 //  FILTER, SORT, SEARCH STATUS
 
@@ -132,7 +129,6 @@ searchButton.addEventListener("click", searchFunction);
 
 async function searchFunction() {
   let prompt = searchInput.value;
-  console.log(prompt)
 
   let searchQuery = query(collection(db, "employee"), where('employeeName', '==', prompt));
   let searchedDocs = await getDocs(searchQuery);
@@ -143,14 +139,17 @@ async function searchFunction() {
 }
 
 
-
+let currentQuery;
 
 /* FETCH AND DISPLAY TABLE */
 
 // fetching main table of all employees
+
 async function queryEmployeeTable(sortOrder) {
   const queryTable = query(collection(db, "employee"), sortOrder, limit(10));
   const employees = await getDocs(queryTable);
+  currentQuery = employees;
+
   showEmployeeTable(employees);
 }
 
@@ -162,8 +161,11 @@ async function getFilteredEmployees(filterArray, sortOrder) {
     where('skills', 'array-contains-any', filterArray), limit(10));
 
   let filteredDocs = await getDocs(filterQuery);
+  currentQuery = filteredDocs;
+
   showEmployeeTable(filteredDocs);
 }
+
 
 
 // Displays fetched data as table 
@@ -209,10 +211,11 @@ function showEmployeeTable(employees) {
         <td><img src=${workIcon} alt="" /></td>
         <td><img src="assets/edit.svg" alt=""  class="edit-icon"/></td>
       </tr>`
-    currentLastId = employee.employeeId;
+
   });
 
   tableBody.innerHTML = temp;
+
 }
 
 
@@ -800,19 +803,38 @@ async function deleteEmployee(id, name) {
 // }, 200);
 
 
+
 const nextButton = document.querySelector(".next-page");
 const previousButton = document.querySelector(".previous-page");
 
-nextButton.addEventListener("click", () => {
-  fetchNextPage(currentLastId);
-})
+nextButton.addEventListener("click", fetchNextPage)
+
+previousButton.addEventListener("click", fetchPreviousPage)
+
+
 
 // pagination
-async function fetchNextPage(nextId) {
+async function fetchNextPage() {
 
-  console.log("trying to fetch next page", nextId);
-  const pageQuery = query(collection(db, "employee"), sortOrder, orderBy("employeeId"), startAt(nextId));
-  let pageDocs = await getDocs(pageQuery);
+  // Get the last visible document
+  const lastVisible = currentQuery.docs[currentQuery.docs.length - 1];
+
+  const pageQuery = query(collection(db, "employee"), sortOrder, startAfter(lastVisible), limit(10));
+  const pageDocs = await getDocs(pageQuery);
+
+  showEmployeeTable(pageDocs);
+}
+
+
+async function fetchPreviousPage() {
+  const docsLength = currentQuery.docs.length;
+
+  // Get the first visible document
+  const firstVisible = currentQuery.docs[docsLength - (docsLength - 1)];
+
+  const pageQuery = query(collection(db, "employee"), sortOrder, startAt(firstVisible), limit(10));
+  const pageDocs = await getDocs(pageQuery);
+
   showEmployeeTable(pageDocs);
 }
 
